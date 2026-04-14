@@ -19,6 +19,7 @@ This folder holds the browser-first user-journey checks for Win Together.
 - Browser-mode mission start flow
 - Codex CLI smoke-test entry point
 - Team Room handoff after a mission starts
+- Mission History and Memory Center navigation with real browser bridge data
 - Long-wait behavior for AI/CLI-style interactions
 
 ## Notes

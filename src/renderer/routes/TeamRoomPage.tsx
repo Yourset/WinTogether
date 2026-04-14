@@ -24,7 +24,7 @@ export function TeamRoomPage() {
   const currentMissionId = activeMissionId ?? missionId ?? null;
 
   return (
-    <section className="page-stack page-stack--team-room">
+    <section data-testid="team-room-page" className="page-stack page-stack--team-room">
       <div className="page-hero">
         <h1 className="page-title">{strings.teamRoomTitle}</h1>
         <p className="page-lead">

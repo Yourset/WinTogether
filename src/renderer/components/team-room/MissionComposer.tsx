@@ -131,13 +131,20 @@ export function MissionComposer({
       : undefined;
 
   return (
-    <section aria-busy={isStartingMission} aria-labelledby="team-room-composer" style={panelStyle} className="composer-panel">
+    <section
+      aria-busy={isStartingMission}
+      aria-labelledby="team-room-composer"
+      data-testid={`mission-composer-${surface}`}
+      style={panelStyle}
+      className="composer-panel"
+    >
       {hideTitle ? null : <h2 id="team-room-composer">{strings.composerTitle}</h2>}
       <div className="composer-panel__field">
         <label htmlFor={workspaceInputId}>{strings.workspaceLabel}</label>
         <input
           id={workspaceInputId}
           type="text"
+          data-testid="mission-workspace-input"
           value={workspacePath}
           placeholder={strings.workspacePlaceholder}
           onChange={(event) => {
@@ -153,6 +160,7 @@ export function MissionComposer({
         <p className="composer-panel__hint">{workspaceStatusMessage}</p>
       </div>
       <textarea
+        data-testid="mission-goal-input"
         placeholder={strings.goalPlaceholder}
         rows={surface === "home" ? 8 : 5}
         value={goal}
@@ -176,6 +184,7 @@ export function MissionComposer({
       <div className="composer-panel__actions">
         <button
           type="button"
+          data-testid="mission-submit-button"
           onClick={() => void handleSubmit()}
           disabled={isStartingMission || workspaceSource === "loading" || !workspacePath.trim()}
           className="button-primary"

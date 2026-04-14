@@ -9,7 +9,7 @@ export function MissionHistoryPage() {
   const strings = getStrings(language);
 
   return (
-    <section style={{ display: "grid", gap: "1rem" }}>
+    <section data-testid="mission-history-page" style={{ display: "grid", gap: "1rem" }}>
       <div style={{ display: "grid", gap: "0.8rem" }}>
         <h1 style={{ margin: 0 }}>{strings.historyTitle}</h1>
         <p style={{ margin: 0, color: "#94a3b8", lineHeight: 1.7 }}>{strings.historyIntro}</p>
@@ -20,6 +20,7 @@ export function MissionHistoryPage() {
           recentMissions.map((mission) => (
             <article
               key={mission.id}
+              data-testid="mission-history-card"
               style={{
                 borderRadius: "18px",
                 border: "1px solid rgba(148, 163, 184, 0.14)",
@@ -36,6 +37,7 @@ export function MissionHistoryPage() {
                 </div>
                 <NavLink
                   to={`/team/${mission.id}`}
+                  data-testid={`mission-history-open-room-${mission.id}`}
                   style={{
                     color: "#7cc8ff",
                     textDecoration: "none",
@@ -54,7 +56,9 @@ export function MissionHistoryPage() {
             </article>
           ))
         ) : (
-          <p style={{ margin: 0, color: "#94a3b8", lineHeight: 1.7 }}>{strings.sidebarNoRecentMissions}</p>
+          <p data-testid="mission-history-empty-state" style={{ margin: 0, color: "#94a3b8", lineHeight: 1.7 }}>
+            {strings.sidebarNoRecentMissions}
+          </p>
         )}
       </div>
     </section>

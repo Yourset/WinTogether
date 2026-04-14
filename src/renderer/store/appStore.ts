@@ -13,6 +13,7 @@ export interface StartMissionInput {
 export interface StartMissionResult {
   mission: MissionRecord;
   captain: AgentRecord;
+  recentMission?: RecentMissionRecord;
   events?: AppEvent[];
   persistence: {
     transcript: {
@@ -193,10 +194,12 @@ export const useAppStore = create<AppState>()((set) => ({
   setCodexSmokeTestRunning: (isCodexSmokeTestRunning) => set({ isCodexSmokeTestRunning }),
   recordMissionStarted: (result) =>
     set((state) => {
+      const mission = result.recentMission ?? result.mission;
+
       return {
         activeMissionId: result.mission.id,
         currentWorkspacePath: result.mission.workspacePath,
-        recentMissions: mergeRecentMissions(state.recentMissions, result.mission),
+        recentMissions: mergeRecentMissions(state.recentMissions, mission),
         timelineItems: [...state.timelineItems, ...mapEventsToTimelineItems(result, state.language)]
       };
     })

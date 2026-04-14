@@ -247,6 +247,7 @@ export function createBrowserBridge(options: BrowserBridgeOptions = {}): WinToge
           ...captain,
           status: "done"
         },
+        recentMission: updatedMission,
         events,
         persistence: {
           transcript: {

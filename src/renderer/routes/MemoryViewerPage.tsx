@@ -23,12 +23,13 @@ export function MemoryViewerPage() {
   }, []);
 
   return (
-    <section style={{ display: "grid", gap: "0.8rem" }}>
+    <section data-testid="memory-viewer-page" style={{ display: "grid", gap: "0.8rem" }}>
       <h1 style={{ margin: 0 }}>{strings.memoryTitle}</h1>
       <p style={{ margin: 0, color: "#94a3b8", lineHeight: 1.7 }}>{strings.memoryIntro}</p>
       {memoryOverview ? (
         <div style={{ display: "grid", gap: "1rem" }}>
           <article
+            data-testid="memory-viewer-index-card"
             style={{
               borderRadius: "18px",
               border: "1px solid rgba(148, 163, 184, 0.14)",
@@ -40,6 +41,7 @@ export function MemoryViewerPage() {
             <pre style={{ margin: 0, whiteSpace: "pre-wrap", lineHeight: 1.7 }}>{memoryOverview.indexContent}</pre>
           </article>
           <article
+            data-testid="memory-viewer-work-log-card"
             style={{
               borderRadius: "18px",
               border: "1px solid rgba(148, 163, 184, 0.14)",
@@ -52,7 +54,9 @@ export function MemoryViewerPage() {
           </article>
         </div>
       ) : (
-        <p style={{ margin: 0, color: "#94a3b8", lineHeight: 1.7 }}>{strings.memoryLoading}</p>
+        <p data-testid="memory-viewer-loading" style={{ margin: 0, color: "#94a3b8", lineHeight: 1.7 }}>
+          {strings.memoryLoading}
+        </p>
       )}
     </section>
   );

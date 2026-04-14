@@ -16,7 +16,11 @@ function SidebarMissionLink({
   title: string;
 }) {
   return (
-    <NavLink to={`/team/${missionId}`} className={({ isActive }) => `app-shell__mission-link${isActive ? " is-active" : ""}`}>
+    <NavLink
+      to={`/team/${missionId}`}
+      data-testid={`sidebar-mission-link-${missionId}`}
+      className={({ isActive }) => `app-shell__mission-link${isActive ? " is-active" : ""}`}
+    >
       <div className="app-shell__mission-title">{title}</div>
       <div className="app-shell__mission-id">{missionId}</div>
     </NavLink>
@@ -64,38 +68,43 @@ export function AppShell() {
     <div className="app-shell" data-theme="light">
       <div className="app-shell__grid">
         <aside className="app-shell__sidebar">
-          <div className="app-shell__brand">
+          <div className="app-shell__brand" data-testid="app-shell-brand">
             <strong className="app-shell__brand-title">Win Together</strong>
             <div className="app-shell__brand-subtitle">{strings.shellTagline}</div>
           </div>
 
-          <nav className="app-shell__nav">
-            <NavLink to="/" className={navLinkClassName} end>
+          <nav className="app-shell__nav" data-testid="app-shell-nav">
+            <NavLink to="/" data-testid="nav-home" className={navLinkClassName} end>
               {strings.navHome}
             </NavLink>
             {teamRoomHref ? (
-              <NavLink to={teamRoomHref} className={navLinkClassName}>
+              <NavLink to={teamRoomHref} data-testid="nav-team-room" className={navLinkClassName}>
                 {strings.navTeamRoom}
               </NavLink>
             ) : (
-              <span aria-disabled="true" title={strings.navTeamRoomHint} className="app-shell__nav-link app-shell__nav-link--disabled">
+              <span
+                aria-disabled="true"
+                title={strings.navTeamRoomHint}
+                data-testid="nav-team-room-disabled"
+                className="app-shell__nav-link app-shell__nav-link--disabled"
+              >
                 {strings.navTeamRoom}
               </span>
             )}
-            <NavLink to="/history" className={navLinkClassName}>
+            <NavLink to="/history" data-testid="nav-history" className={navLinkClassName}>
               {strings.navHistory}
             </NavLink>
-            <NavLink to="/memory" className={navLinkClassName}>
+            <NavLink to="/memory" data-testid="nav-memory" className={navLinkClassName}>
               {strings.navMemory}
             </NavLink>
           </nav>
 
-          <section className="app-shell__panel">
+          <section className="app-shell__panel" data-testid="app-shell-workspace-panel">
             <div className="app-shell__section-label">{strings.sidebarWorkspace}</div>
             <div className="app-shell__workspace">{currentWorkspacePath ?? strings.sidebarWorkspaceEmpty}</div>
           </section>
 
-          <section className="app-shell__panel app-shell__panel--stack">
+          <section className="app-shell__panel app-shell__panel--stack" data-testid="app-shell-recent-missions-panel">
             <div className="app-shell__section-label">{strings.sidebarRecentMissions}</div>
             <div className="app-shell__stack">
               {recentMissions.length > 0 ? (
@@ -106,7 +115,7 @@ export function AppShell() {
             </div>
           </section>
 
-          <section className="app-shell__panel app-shell__runtime">
+          <section className="app-shell__panel app-shell__runtime" data-testid="app-shell-runtime-panel">
             <div className="app-shell__section-label">{strings.sidebarCodexCli}</div>
             <div className="app-shell__runtime-status">
               {runtimeStatus
@@ -118,7 +127,7 @@ export function AppShell() {
             <div className="app-shell__runtime-message">{runtimeStatus?.codexCli.message ?? strings.workspaceLoading}</div>
           </section>
 
-          <section className="app-shell__panel">
+          <section className="app-shell__panel" data-testid="app-shell-language-panel">
             <div className="app-shell__section-label">{strings.sidebarLanguage}</div>
             <div className="app-shell__language-switcher">
               <button

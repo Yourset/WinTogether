@@ -36,6 +36,13 @@ describe("browserBridge", () => {
 
     expect(missionResult.mission.goal).toBe("Build the first login flow");
     expect(missionResult.mission.workspacePath).toBe("D:/development/WinTogether2");
+    expect(missionResult.recentMission).toEqual(
+      expect.objectContaining({
+        id: missionResult.mission.id,
+        goal: "Build the first login flow",
+        summary: expect.stringContaining("Browser Captain")
+      })
+    );
     expect(missionResult.events?.some((event) => event.type === "mission.created")).toBe(true);
     expect(missionResult.events?.some((event) => event.type === "agent.spawned")).toBe(true);
     expect(missionResult.events?.some((event) => event.type === "agent.message")).toBe(true);
