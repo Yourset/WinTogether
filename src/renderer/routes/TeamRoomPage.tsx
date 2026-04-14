@@ -24,24 +24,17 @@ export function TeamRoomPage() {
   const currentMissionId = activeMissionId ?? missionId ?? null;
 
   return (
-    <section style={{ display: "grid", gap: "1.2rem" }}>
-      <div>
-        <h1 style={{ margin: 0 }}>{strings.teamRoomTitle}</h1>
-        <p style={{ marginTop: "0.4rem", color: "#8da2bd" }}>
-          {strings.missionIdLabel}：{currentMissionId ?? strings.missionIdUnassigned}
+    <section className="page-stack page-stack--team-room">
+      <div className="page-hero">
+        <h1 className="page-title">{strings.teamRoomTitle}</h1>
+        <p className="page-lead">
+          {strings.missionIdLabel}: {currentMissionId ?? strings.missionIdUnassigned}
         </p>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gap: "1rem",
-          gridTemplateColumns: "minmax(14rem, 17rem) minmax(0, 1fr) minmax(16rem, 20rem)",
-          alignItems: "start"
-        }}
-      >
+      <div className="team-room-grid">
         <RosterPanel agents={agents} />
-        <div style={{ display: "grid", gap: "1rem" }}>
+        <div className="team-room-grid__middle">
           <MessageTimeline items={timelineItems} />
           <MissionComposer />
         </div>

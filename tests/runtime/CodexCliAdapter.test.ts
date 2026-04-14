@@ -73,4 +73,22 @@ describe("CodexCliAdapter", () => {
       message: "spawn ENOENT"
     });
   });
+
+  it("runs a non-interactive smoke prompt and returns the CLI output", async () => {
+    const adapter = new CodexCliAdapter();
+    const child = createMockProcess();
+
+    mockedSpawn.mockReturnValue(child as never);
+
+    const smokeTestPromise = adapter.runSmokePrompt("D:/development/WinTogether2", "Say hello");
+
+    child.stdout.emit("data", "Codex CLI is working.\n");
+    child.emit("close", 0);
+
+    await expect(smokeTestPromise).resolves.toEqual({
+      status: "success",
+      message: "Codex CLI is working.",
+      rawOutput: "Codex CLI is working."
+    });
+  });
 });

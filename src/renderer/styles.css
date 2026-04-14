@@ -1,0 +1,392 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #152334;
+  background: #f4f7fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(95, 140, 255, 0.16), transparent 26%),
+    linear-gradient(180deg, #f7fbff 0%, #eef3f8 100%);
+  color: #152334;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.app-shell__grid {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.app-shell__sidebar {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  gap: 1rem;
+  padding: 1.25rem 1rem;
+  border-right: 1px solid rgba(117, 138, 170, 0.18);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px);
+}
+
+.app-shell__brand {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.app-shell__brand-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.app-shell__brand-subtitle,
+.app-shell__section-label,
+.app-shell__mission-id,
+.page-note,
+.page-lead,
+.surface-card__body {
+  color: #65778f;
+}
+
+.app-shell__nav {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.app-shell__nav-link,
+.app-shell__mission-link {
+  display: block;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(122, 145, 176, 0.18);
+  background: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  color: #223448;
+  font-weight: 600;
+  box-shadow: 0 12px 28px rgba(27, 48, 79, 0.05);
+}
+
+.app-shell__nav-link.is-active,
+.app-shell__mission-link.is-active {
+  background: linear-gradient(135deg, #d6ebff, #def7df);
+  color: #0f2234;
+  border-color: rgba(95, 140, 255, 0.18);
+}
+
+.app-shell__nav-link--disabled {
+  cursor: not-allowed;
+  color: #8c9ab0;
+  background: rgba(245, 247, 251, 0.94);
+}
+
+.app-shell__panel,
+.surface-card,
+.timeline-panel,
+.roster-panel,
+.context-panel,
+.composer-panel {
+  border-radius: 20px;
+  border: 1px solid rgba(122, 145, 176, 0.16);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 18px 40px rgba(27, 48, 79, 0.06);
+  padding: 1rem;
+}
+
+.app-shell__panel--stack,
+.app-shell__stack,
+.page-stack,
+.team-room-grid__middle,
+.surface-card {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.app-shell__workspace {
+  word-break: break-all;
+  line-height: 1.6;
+}
+
+.app-shell__empty-state {
+  margin: 0;
+  line-height: 1.6;
+  color: #7a8aa0;
+}
+
+.app-shell__runtime-status {
+  font-weight: 700;
+}
+
+.app-shell__runtime-message {
+  color: #4d627c;
+  line-height: 1.6;
+}
+
+.app-shell__language-switcher {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.app-shell__language-button,
+.button-primary,
+.button-secondary {
+  border-radius: 12px;
+  padding: 0.75rem 1.1rem;
+  font-weight: 700;
+}
+
+.app-shell__language-button {
+  border: 1px solid rgba(122, 145, 176, 0.18);
+  background: #ffffff;
+  color: #213245;
+}
+
+.app-shell__language-button.is-active {
+  background: #152334;
+  border-color: #152334;
+  color: #ffffff;
+}
+
+.app-shell__content {
+  padding: 2rem 2.25rem;
+}
+
+.page-stack {
+  min-height: 100%;
+}
+
+.page-stack--home {
+  max-width: 900px;
+  margin: 0 auto;
+  align-content: center;
+}
+
+.page-hero {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 2rem;
+  color: #132334;
+}
+
+.page-lead,
+.page-note {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.team-room-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(14rem, 17rem) minmax(0, 1fr) minmax(16rem, 20rem);
+  align-items: start;
+}
+
+.timeline-list,
+.roster-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.timeline-entry,
+.roster-list__item {
+  border-radius: 16px;
+  border: 1px solid rgba(122, 145, 176, 0.14);
+  background: #ffffff;
+  padding: 0.9rem 1rem;
+}
+
+.timeline-entry--system {
+  background: #eef6ff;
+}
+
+.timeline-entry__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.timeline-entry__actor {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-weight: 700;
+}
+
+.timeline-entry__dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: #54b9ff;
+}
+
+.timeline-entry__dot--agent {
+  background: #4cc38a;
+}
+
+.timeline-entry__time {
+  color: #7a8aa0;
+  font-size: 0.85rem;
+}
+
+.timeline-entry__message {
+  margin: 0;
+  color: #24374b;
+  line-height: 1.7;
+}
+
+.roster-list__meta,
+.context-panel dt,
+.composer-panel__hint,
+.surface-card__meta {
+  color: #71839a;
+}
+
+.roster-list__meta {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.context-panel dl {
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.context-panel dd {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.composer-panel__field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.composer-panel__input,
+.composer-panel__textarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(122, 145, 176, 0.2);
+  background: #ffffff;
+  color: #152334;
+  padding: 0.85rem 0.95rem;
+}
+
+.composer-panel__textarea {
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.composer-panel__actions,
+.surface-card__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.button-primary {
+  border: 1px solid rgba(95, 140, 255, 0.18);
+  background: linear-gradient(135deg, #cae4ff, #d8f4dd);
+  color: #102131;
+}
+
+.button-secondary {
+  border: 1px solid rgba(122, 145, 176, 0.2);
+  background: #ffffff;
+  color: #213245;
+}
+
+.button-primary:disabled,
+.button-secondary:disabled,
+.app-shell__language-button:disabled {
+  opacity: 0.65;
+}
+
+.status-inline {
+  border-radius: 14px;
+  border: 1px solid rgba(122, 145, 176, 0.16);
+  background: #f8fbff;
+  padding: 0.9rem 1rem;
+  color: #4d627c;
+}
+
+.surface-card--compact {
+  gap: 0.8rem;
+}
+
+.surface-card--inset {
+  background: #f9fbff;
+  box-shadow: none;
+}
+
+.surface-card__header {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.surface-card__title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.surface-card__body,
+.surface-card__meta {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.surface-card__pre {
+  margin: 0;
+  white-space: pre-wrap;
+  color: #31465d;
+}
+
+.alert-error {
+  margin: 0;
+  color: #b42318;
+}
+
+@media (max-width: 1100px) {
+  .app-shell__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell__content {
+    padding: 1.25rem;
+  }
+
+  .team-room-grid {
+    grid-template-columns: 1fr;
+  }
+}

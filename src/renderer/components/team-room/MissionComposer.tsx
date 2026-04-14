@@ -122,17 +122,14 @@ export function MissionComposer({
   const panelStyle =
     surface === "home"
       ? {
-          border: "1px solid rgba(148, 163, 184, 0.18)",
-          borderRadius: "20px",
-          padding: "1.1rem",
-          background: "rgba(15, 23, 42, 0.7)"
+          maxWidth: "100%"
         }
       : undefined;
 
   return (
-    <section aria-labelledby="team-room-composer" style={panelStyle}>
+    <section aria-labelledby="team-room-composer" style={panelStyle} className="composer-panel">
       {hideTitle ? null : <h2 id="team-room-composer">{strings.composerTitle}</h2>}
-      <div style={{ display: "grid", gap: "0.5rem" }}>
+      <div className="composer-panel__field">
         <label htmlFor={workspaceInputId}>{strings.workspaceLabel}</label>
         <input
           id={workspaceInputId}
@@ -147,15 +144,9 @@ export function MissionComposer({
             setCurrentWorkspacePath(nextWorkspacePath || null);
             setErrorMessage(null);
           }}
-          style={{
-            borderRadius: "12px",
-            border: "1px solid rgba(148, 163, 184, 0.2)",
-            background: "rgba(15, 23, 42, 0.92)",
-            color: "#e2e8f0",
-            padding: "0.8rem 0.9rem"
-          }}
+          className="composer-panel__input"
         />
-        <p style={{ margin: 0, color: "#94a3b8", lineHeight: 1.6 }}>{workspaceStatusMessage}</p>
+        <p className="composer-panel__hint">{workspaceStatusMessage}</p>
       </div>
       <textarea
         placeholder={strings.goalPlaceholder}
@@ -165,38 +156,21 @@ export function MissionComposer({
           setGoal(event.target.value);
           setErrorMessage(null);
         }}
-        style={{
-          width: "100%",
-          marginTop: "1rem",
-          borderRadius: "16px",
-          border: "1px solid rgba(148, 163, 184, 0.2)",
-          background: "rgba(15, 23, 42, 0.92)",
-          color: "#e2e8f0",
-          padding: "1rem",
-          resize: "vertical",
-          lineHeight: 1.6
-        }}
+        className="composer-panel__textarea"
+        style={{ marginTop: "1rem" }}
       />
       {errorMessage ? (
-        <p role="alert" style={{ color: "#fca5a5", marginBottom: 0 }}>
+        <p role="alert" className="alert-error">
           {errorMessage}
         </p>
       ) : null}
-      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
+      <div className="composer-panel__actions">
         <button
           type="button"
           onClick={() => void handleSubmit()}
           disabled={isStartingMission || workspaceSource === "loading" || !workspacePath.trim()}
-          style={{
-            border: "none",
-            borderRadius: "12px",
-            padding: "0.8rem 1.2rem",
-            background: "linear-gradient(135deg, #73e0a9, #5dc58f)",
-            color: "#062113",
-            fontWeight: 700,
-            cursor: isStartingMission ? "wait" : "pointer",
-            opacity: isStartingMission || workspaceSource === "loading" || !workspacePath.trim() ? 0.65 : 1
-          }}
+          className="button-primary"
+          style={{ opacity: isStartingMission || workspaceSource === "loading" || !workspacePath.trim() ? 0.65 : 1 }}
         >
           {submitLabel ?? strings.send}
         </button>

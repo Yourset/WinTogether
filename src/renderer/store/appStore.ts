@@ -33,6 +33,12 @@ export interface RuntimeStatus {
   };
 }
 
+export interface CodexSmokeTestResult {
+  status: "success" | "error";
+  message: string;
+  rawOutput: string;
+}
+
 export interface MemoryOverview {
   indexContent: string;
   workLogContent: string;
@@ -50,6 +56,7 @@ export interface WinTogetherApi {
   getMemoryOverview?(): Promise<MemoryOverview>;
   getRecentMissions?(): Promise<RecentMissionRecord[]>;
   getRuntimeStatus?(): Promise<RuntimeStatus>;
+  runCodexSmokeTest?(prompt?: string): Promise<CodexSmokeTestResult>;
   startMission(input: StartMissionInput): Promise<StartMissionResult>;
 }
 
@@ -64,6 +71,8 @@ type AppState = {
   timelineItems: TimelineItem[];
   recentMissions: RecentMissionRecord[];
   runtimeStatus: RuntimeStatus | null;
+  codexSmokeTestResult: CodexSmokeTestResult | null;
+  isCodexSmokeTestRunning: boolean;
   currentWorkspacePath: string | null;
   language: AppLanguage;
   setLanguage: (language: AppLanguage) => void;
@@ -71,6 +80,8 @@ type AppState = {
   setCurrentWorkspacePath: (workspacePath: string | null) => void;
   setRecentMissions: (recentMissions: RecentMissionRecord[]) => void;
   setRuntimeStatus: (runtimeStatus: RuntimeStatus | null) => void;
+  setCodexSmokeTestResult: (result: CodexSmokeTestResult | null) => void;
+  setCodexSmokeTestRunning: (isRunning: boolean) => void;
   recordMissionStarted: (result: StartMissionResult) => void;
 };
 
@@ -126,6 +137,24 @@ function mapEventsToTimelineItems(result: StartMissionResult, language: AppLangu
     }
 
     if (event.type === "agent.message") {
+      if (event.payload.text.startsWith("cli.error:")) {
+        return {
+          id: event.id,
+          actor: result.captain.name,
+          message: strings.captainCliFailure(event.payload.text.replace("cli.error:", "")),
+          time: formatTimelineTime(event.timestamp)
+        };
+      }
+
+      if (!["captain.summary", "captain.planning"].includes(event.payload.text)) {
+        return {
+          id: event.id,
+          actor: result.captain.name,
+          message: strings.captainCliResponse(event.payload.text),
+          time: formatTimelineTime(event.timestamp)
+        };
+      }
+
       return {
         id: event.id,
         actor: result.captain.name,
@@ -151,6 +180,8 @@ export const useAppStore = create<AppState>()((set) => ({
   timelineItems: [],
   recentMissions: [],
   runtimeStatus: null,
+  codexSmokeTestResult: null,
+  isCodexSmokeTestRunning: false,
   currentWorkspacePath: null,
   language: "zh-CN",
   setLanguage: (language) => set({ language }),
@@ -158,6 +189,8 @@ export const useAppStore = create<AppState>()((set) => ({
   setCurrentWorkspacePath: (workspacePath) => set({ currentWorkspacePath: workspacePath?.trim() ? workspacePath.trim() : null }),
   setRecentMissions: (recentMissions) => set({ recentMissions: recentMissions.slice(0, 8) }),
   setRuntimeStatus: (runtimeStatus) => set({ runtimeStatus }),
+  setCodexSmokeTestResult: (codexSmokeTestResult) => set({ codexSmokeTestResult }),
+  setCodexSmokeTestRunning: (isCodexSmokeTestRunning) => set({ isCodexSmokeTestRunning }),
   recordMissionStarted: (result) =>
     set((state) => {
       return {

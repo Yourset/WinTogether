@@ -1,6 +1,7 @@
 import { MemoryManager } from "../../../runtime/core/MemoryManager";
 import type {
   AppMemoryOverview,
+  AppRuntimeSmokeTestResult,
   AppRuntime,
   AppRuntimeMissionStartResult,
   AppRuntimeStatus
@@ -59,5 +60,15 @@ export class AppRuntimeService {
 
   async getMemoryOverview(): Promise<AppMemoryOverview> {
     return this.memoryManager.readOverview();
+  }
+
+  async runCodexSmokeTest(prompt?: string): Promise<AppRuntimeSmokeTestResult> {
+    return (
+      (await this.options.runtime.runCodexSmokeTest?.(prompt)) ?? {
+        status: "error",
+        message: "Codex CLI smoke test is unavailable",
+        rawOutput: "Codex CLI smoke test is unavailable"
+      }
+    );
   }
 }

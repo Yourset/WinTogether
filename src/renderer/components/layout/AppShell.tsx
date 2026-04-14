@@ -4,16 +4,9 @@ import { NavLink, Outlet } from "react-router-dom";
 import { getStrings } from "../../i18n";
 import { useAppStore } from "../../store/appStore";
 
-const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
-  display: "block",
-  borderRadius: "14px",
-  padding: "0.85rem 1rem",
-  color: isActive ? "#08131f" : "#d8e2ef",
-  textDecoration: "none",
-  fontWeight: 600,
-  background: isActive ? "linear-gradient(135deg, #73e0a9, #7cc8ff)" : "rgba(255, 255, 255, 0.03)",
-  border: isActive ? "none" : "1px solid rgba(148, 163, 184, 0.12)"
-});
+function navLinkClassName({ isActive }: { isActive: boolean }) {
+  return `app-shell__nav-link${isActive ? " is-active" : ""}`;
+}
 
 function SidebarMissionLink({
   missionId,
@@ -23,20 +16,9 @@ function SidebarMissionLink({
   title: string;
 }) {
   return (
-    <NavLink
-      to={`/team/${missionId}`}
-      style={({ isActive }) => ({
-        display: "block",
-        padding: "0.75rem 0.85rem",
-        borderRadius: "12px",
-        background: isActive ? "rgba(124, 200, 255, 0.16)" : "rgba(255, 255, 255, 0.02)",
-        color: "#dbe7f5",
-        textDecoration: "none",
-        border: "1px solid rgba(148, 163, 184, 0.12)"
-      })}
-    >
-      <div style={{ fontWeight: 600 }}>{title}</div>
-      <div style={{ fontSize: "0.8rem", color: "#8da2bd", marginTop: "0.25rem" }}>{missionId}</div>
+    <NavLink to={`/team/${missionId}`} className={({ isActive }) => `app-shell__mission-link${isActive ? " is-active" : ""}`}>
+      <div className="app-shell__mission-title">{title}</div>
+      <div className="app-shell__mission-id">{missionId}</div>
     </NavLink>
   );
 }
@@ -79,149 +61,71 @@ export function AppShell() {
   }, [setRecentMissions, setRuntimeStatus]);
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background:
-          "radial-gradient(circle at top left, rgba(124, 200, 255, 0.18), transparent 30%), linear-gradient(180deg, #09111f 0%, #050913 100%)",
-        color: "#e2e8f0"
-      }}
-    >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "300px minmax(0, 1fr)",
-          minHeight: "100vh"
-        }}
-      >
-        <aside
-          style={{
-            borderRight: "1px solid rgba(148, 163, 184, 0.14)",
-            background: "rgba(8, 15, 27, 0.86)",
-            padding: "1.25rem 1rem",
-            display: "grid",
-            gridTemplateRows: "auto auto auto 1fr auto",
-            gap: "1rem"
-          }}
-        >
-          <div>
-            <strong style={{ fontSize: "1.05rem" }}>Win Together</strong>
-            <div style={{ fontSize: "0.9rem", color: "#8da2bd", marginTop: "0.35rem" }}>{strings.shellTagline}</div>
+    <div className="app-shell" data-theme="light">
+      <div className="app-shell__grid">
+        <aside className="app-shell__sidebar">
+          <div className="app-shell__brand">
+            <strong className="app-shell__brand-title">Win Together</strong>
+            <div className="app-shell__brand-subtitle">{strings.shellTagline}</div>
           </div>
 
-          <nav style={{ display: "grid", gap: "0.65rem" }}>
-            <NavLink to="/" style={navLinkStyle} end>
+          <nav className="app-shell__nav">
+            <NavLink to="/" className={navLinkClassName} end>
               {strings.navHome}
             </NavLink>
             {teamRoomHref ? (
-              <NavLink to={teamRoomHref} style={navLinkStyle}>
+              <NavLink to={teamRoomHref} className={navLinkClassName}>
                 {strings.navTeamRoom}
               </NavLink>
             ) : (
-              <span
-                aria-disabled="true"
-                title={strings.navTeamRoomHint}
-                style={{
-                  display: "block",
-                  borderRadius: "14px",
-                  padding: "0.85rem 1rem",
-                  color: "#64748b",
-                  background: "rgba(255, 255, 255, 0.03)",
-                  border: "1px solid rgba(148, 163, 184, 0.12)",
-                  cursor: "not-allowed",
-                  fontWeight: 600
-                }}
-              >
+              <span aria-disabled="true" title={strings.navTeamRoomHint} className="app-shell__nav-link app-shell__nav-link--disabled">
                 {strings.navTeamRoom}
               </span>
             )}
-            <NavLink to="/history" style={navLinkStyle}>
+            <NavLink to="/history" className={navLinkClassName}>
               {strings.navHistory}
             </NavLink>
-            <NavLink to="/memory" style={navLinkStyle}>
+            <NavLink to="/memory" className={navLinkClassName}>
               {strings.navMemory}
             </NavLink>
           </nav>
 
-          <section
-            style={{
-              borderRadius: "18px",
-              padding: "1rem",
-              background: "rgba(255, 255, 255, 0.03)",
-              border: "1px solid rgba(148, 163, 184, 0.1)"
-            }}
-          >
-            <div style={{ fontSize: "0.85rem", color: "#8da2bd", marginBottom: "0.6rem" }}>{strings.sidebarWorkspace}</div>
-            <div style={{ lineHeight: 1.6, wordBreak: "break-all" }}>{currentWorkspacePath ?? strings.sidebarWorkspaceEmpty}</div>
+          <section className="app-shell__panel">
+            <div className="app-shell__section-label">{strings.sidebarWorkspace}</div>
+            <div className="app-shell__workspace">{currentWorkspacePath ?? strings.sidebarWorkspaceEmpty}</div>
           </section>
 
-          <section
-            style={{
-              borderRadius: "18px",
-              padding: "1rem",
-              background: "rgba(255, 255, 255, 0.03)",
-              border: "1px solid rgba(148, 163, 184, 0.1)",
-              display: "grid",
-              gap: "0.75rem",
-              alignContent: "start"
-            }}
-          >
-            <div style={{ fontSize: "0.85rem", color: "#8da2bd" }}>{strings.sidebarRecentMissions}</div>
-            <div style={{ display: "grid", gap: "0.6rem" }}>
+          <section className="app-shell__panel app-shell__panel--stack">
+            <div className="app-shell__section-label">{strings.sidebarRecentMissions}</div>
+            <div className="app-shell__stack">
               {recentMissions.length > 0 ? (
-                recentMissions.map((mission) => (
-                  <SidebarMissionLink key={mission.id} missionId={mission.id} title={mission.title} />
-                ))
+                recentMissions.map((mission) => <SidebarMissionLink key={mission.id} missionId={mission.id} title={mission.title} />)
               ) : (
-                <p style={{ margin: 0, color: "#8da2bd", lineHeight: 1.6 }}>{strings.sidebarNoRecentMissions}</p>
+                <p className="app-shell__empty-state">{strings.sidebarNoRecentMissions}</p>
               )}
             </div>
           </section>
 
-          <section
-            style={{
-              borderRadius: "18px",
-              padding: "1rem",
-              background: "rgba(255, 255, 255, 0.03)",
-              border: "1px solid rgba(148, 163, 184, 0.1)",
-              display: "grid",
-              gap: "0.45rem"
-            }}
-          >
-            <div style={{ fontSize: "0.85rem", color: "#8da2bd" }}>{strings.sidebarCodexCli}</div>
-            <div style={{ fontWeight: 600 }}>
+          <section className="app-shell__panel app-shell__runtime">
+            <div className="app-shell__section-label">{strings.sidebarCodexCli}</div>
+            <div className="app-shell__runtime-status">
               {runtimeStatus
                 ? runtimeStatus.codexCli.status === "ready"
                   ? strings.runtimeReady
                   : strings.runtimeUnavailable
-                : "…"}
+                : "..."}
             </div>
-            <div style={{ color: "#cbd5e1", lineHeight: 1.6 }}>
-              {runtimeStatus?.codexCli.message ?? strings.workspaceLoading}
-            </div>
+            <div className="app-shell__runtime-message">{runtimeStatus?.codexCli.message ?? strings.workspaceLoading}</div>
           </section>
 
-          <section
-            style={{
-              borderRadius: "18px",
-              padding: "1rem",
-              background: "rgba(255, 255, 255, 0.03)",
-              border: "1px solid rgba(148, 163, 184, 0.1)"
-            }}
-          >
-            <div style={{ fontSize: "0.85rem", color: "#8da2bd", marginBottom: "0.6rem" }}>{strings.sidebarLanguage}</div>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
+          <section className="app-shell__panel">
+            <div className="app-shell__section-label">{strings.sidebarLanguage}</div>
+            <div className="app-shell__language-switcher">
               <button
                 type="button"
                 onClick={() => setLanguage("zh-CN")}
                 disabled={language === "zh-CN"}
-                style={{
-                  borderRadius: "10px",
-                  border: "1px solid rgba(148, 163, 184, 0.16)",
-                  background: language === "zh-CN" ? "#e2e8f0" : "rgba(255, 255, 255, 0.04)",
-                  color: language === "zh-CN" ? "#09111f" : "#e2e8f0",
-                  padding: "0.45rem 0.75rem"
-                }}
+                className={`app-shell__language-button${language === "zh-CN" ? " is-active" : ""}`}
               >
                 中文
               </button>
@@ -229,13 +133,7 @@ export function AppShell() {
                 type="button"
                 onClick={() => setLanguage("en")}
                 disabled={language === "en"}
-                style={{
-                  borderRadius: "10px",
-                  border: "1px solid rgba(148, 163, 184, 0.16)",
-                  background: language === "en" ? "#e2e8f0" : "rgba(255, 255, 255, 0.04)",
-                  color: language === "en" ? "#09111f" : "#e2e8f0",
-                  padding: "0.45rem 0.75rem"
-                }}
+                className={`app-shell__language-button${language === "en" ? " is-active" : ""}`}
               >
                 EN
               </button>
@@ -243,7 +141,7 @@ export function AppShell() {
           </section>
         </aside>
 
-        <main style={{ padding: "2rem 2.25rem" }}>
+        <main className="app-shell__content">
           <Outlet />
         </main>
       </div>

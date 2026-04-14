@@ -16,7 +16,9 @@ describe("AppShell workbench layout", () => {
       language: "zh-CN",
       recentMissions: [],
       currentWorkspacePath: "D:/development/WinTogether2",
-      runtimeStatus: null
+      runtimeStatus: null,
+      codexSmokeTestResult: null,
+      isCodexSmokeTestRunning: false
     });
 
     Object.defineProperty(window, "winTogether", {
@@ -30,6 +32,7 @@ describe("AppShell workbench layout", () => {
             message: "codex 1.2.3"
           }
         }),
+        runCodexSmokeTest: vi.fn(),
         startMission: vi.fn()
       }
     });
@@ -50,6 +53,7 @@ describe("AppShell workbench layout", () => {
       </MemoryRouter>
     );
 
+    expect(document.querySelector('[data-theme="light"]')).toBeTruthy();
     expect(screen.getByText("任务指挥台")).toBeTruthy();
     expect(screen.getByText("新建任务")).toBeTruthy();
     expect(screen.getByText("当前协作室")).toBeTruthy();
@@ -78,7 +82,9 @@ describe("AppShell workbench layout", () => {
           status: "draft",
           createdAt: "2026-04-14T20:00:00.000Z"
         }
-      ]
+      ],
+      codexSmokeTestResult: null,
+      isCodexSmokeTestRunning: false
     });
 
     render(
@@ -127,6 +133,7 @@ describe("AppShell workbench layout", () => {
             message: "codex 1.2.3"
           }
         }),
+        runCodexSmokeTest: vi.fn(),
         startMission: vi.fn()
       }
     });
@@ -152,22 +159,9 @@ describe("AppShell workbench layout", () => {
       language: "en",
       recentMissions: [],
       currentWorkspacePath: "D:/development/WinTogether2",
-      runtimeStatus: null
-    });
-
-    Object.defineProperty(window, "winTogether", {
-      configurable: true,
-      value: {
-        getDefaultWorkspacePath: vi.fn().mockResolvedValue("D:/development/WinTogether2"),
-        getRecentMissions: vi.fn().mockResolvedValue([]),
-        getRuntimeStatus: vi.fn().mockResolvedValue({
-          codexCli: {
-            status: "ready",
-            message: "codex 1.2.3"
-          }
-        }),
-        startMission: vi.fn()
-      }
+      runtimeStatus: null,
+      codexSmokeTestResult: null,
+      isCodexSmokeTestRunning: false
     });
 
     render(

@@ -4,10 +4,12 @@ import {
   runtimeGetMemoryOverviewChannel,
   runtimeGetRecentMissionsChannel,
   runtimeGetStatusChannel,
+  runtimeRunCodexSmokeTestChannel,
   runtimeStartMissionChannel
 } from "../main/ipc/channels/runtimeChannels";
 import { workspaceDefaultPathChannel } from "../main/ipc/channels/workspaceChannels";
-import type { AppMemoryOverview, AppRuntimeStatus } from "../runtime/core/AppRuntime";
+import type { AppMemoryOverview, AppRuntimeSmokeTestResult, AppRuntimeStatus } from "../runtime/core/AppRuntime";
+import type { AppEvent } from "../shared/contracts/events";
 import type { RecentMissionRecord } from "../runtime/core/TranscriptStore";
 
 interface MissionRecord {
@@ -34,6 +36,7 @@ export interface StartMissionInput {
 export interface StartMissionResult {
   mission: MissionRecord;
   captain: AgentRecord;
+  events?: AppEvent[];
   persistence: {
     transcript: {
       status: "written" | "failed";
@@ -46,6 +49,7 @@ export interface WinTogetherApi {
   getMemoryOverview?(): Promise<AppMemoryOverview>;
   getRecentMissions?(): Promise<RecentMissionRecord[]>;
   getRuntimeStatus?(): Promise<AppRuntimeStatus>;
+  runCodexSmokeTest?(prompt?: string): Promise<AppRuntimeSmokeTestResult>;
   startMission(input: StartMissionInput): Promise<StartMissionResult>;
 }
 
@@ -54,6 +58,7 @@ const api: WinTogetherApi = {
   getMemoryOverview: () => ipcRenderer.invoke(runtimeGetMemoryOverviewChannel),
   getRecentMissions: () => ipcRenderer.invoke(runtimeGetRecentMissionsChannel),
   getRuntimeStatus: () => ipcRenderer.invoke(runtimeGetStatusChannel),
+  runCodexSmokeTest: (prompt) => ipcRenderer.invoke(runtimeRunCodexSmokeTestChannel, prompt),
   startMission: (input) => ipcRenderer.invoke(runtimeStartMissionChannel, input)
 };
 

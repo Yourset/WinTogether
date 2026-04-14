@@ -5,6 +5,7 @@ import {
   runtimeGetMemoryOverviewChannel,
   runtimeGetStatusChannel,
   runtimeGetRecentMissionsChannel,
+  runtimeRunCodexSmokeTestChannel,
   runtimeStartMissionChannel
 } from "../../src/main/ipc/channels/runtimeChannels";
 
@@ -122,5 +123,32 @@ describe("registerRuntimeChannels", () => {
       workLogContent: "# Current Work Log"
     });
     expect(getMemoryOverview).toHaveBeenCalledTimes(1);
+  });
+
+  it("registers the runtime:run-codex-smoke-test handler when the runtime service supports it", async () => {
+    const handle = vi.fn();
+    const runCodexSmokeTest = vi.fn().mockResolvedValue({
+      status: "success",
+      message: "Codex CLI is working.",
+      rawOutput: "Codex CLI is working."
+    });
+
+    registerRuntimeChannels(
+      { handle },
+      {
+        startMission: vi.fn(),
+        runCodexSmokeTest
+      }
+    );
+
+    expect(handle).toHaveBeenCalledWith(runtimeRunCodexSmokeTestChannel, expect.any(Function));
+
+    const handler = handle.mock.calls[1]?.[1] as ((_event: unknown, prompt: string) => Promise<unknown>) | undefined;
+    await expect(handler?.({}, "Say hello")).resolves.toEqual({
+      status: "success",
+      message: "Codex CLI is working.",
+      rawOutput: "Codex CLI is working."
+    });
+    expect(runCodexSmokeTest).toHaveBeenCalledWith("Say hello");
   });
 });

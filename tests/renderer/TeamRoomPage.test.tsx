@@ -31,11 +31,21 @@ describe("TeamRoomPage", () => {
   });
 
   it("shows the team room layout with timeline, agents, context, and composer", () => {
-    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
+    useAppStore.setState({
+      activeMissionId: null,
+      timelineItems: [],
+      language: "zh-CN",
+      recentMissions: [],
+      runtimeStatus: null,
+      codexSmokeTestResult: null,
+      isCodexSmokeTestRunning: false
+    });
+
     Object.defineProperty(window, "winTogether", {
       configurable: true,
       value: {
         getDefaultWorkspacePath: vi.fn().mockResolvedValue("D:/development/WinTogether2/.worktrees/feature-v1-foundation"),
+        runCodexSmokeTest: vi.fn(),
         startMission: vi.fn()
       }
     });
@@ -49,7 +59,7 @@ describe("TeamRoomPage", () => {
     );
 
     expect(screen.getByText("团队协作室")).toBeTruthy();
-    expect(screen.getByText("任务 ID：mission-42")).toBeTruthy();
+    expect(screen.getByText("任务 ID: mission-42")).toBeTruthy();
     expect(screen.getByText("协作时间线")).toBeTruthy();
     expect(screen.getByText("当前成员")).toBeTruthy();
     expect(screen.getByText("当前上下文")).toBeTruthy();
@@ -58,7 +68,15 @@ describe("TeamRoomPage", () => {
   });
 
   it("starts a mission from the composer and appends captain updates to the timeline", async () => {
-    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
+    useAppStore.setState({
+      activeMissionId: null,
+      timelineItems: [],
+      language: "zh-CN",
+      recentMissions: [],
+      runtimeStatus: null,
+      codexSmokeTestResult: null,
+      isCodexSmokeTestRunning: false
+    });
     const getDefaultWorkspacePath = vi
       .fn()
       .mockResolvedValue("D:/development/WinTogether2/.worktrees/feature-v1-foundation");
@@ -124,7 +142,7 @@ describe("TeamRoomPage", () => {
           payload: {
             missionId: "mission-123",
             agentId: "agent-123",
-            text: "captain.summary"
+            text: "Captain will start by reviewing the workspace and outlining the first build step."
           }
         }
       ],
@@ -139,6 +157,7 @@ describe("TeamRoomPage", () => {
       configurable: true,
       value: {
         getDefaultWorkspacePath,
+        runCodexSmokeTest: vi.fn(),
         startMission
       }
     });
@@ -175,13 +194,23 @@ describe("TeamRoomPage", () => {
     expect(await screen.findByText("任务“Ship the first loop”已启动。")).toBeTruthy();
     expect(await screen.findByText("Captain 已加入当前协作室。")).toBeTruthy();
     expect(await screen.findByText("Captain 正在为这个目标规划下一步：Ship the first loop")).toBeTruthy();
-    expect(await screen.findByText("Captain 已给出第一版执行摘要，接下来会围绕“Ship the first loop”继续组织协作。")).toBeTruthy();
+    expect(
+      await screen.findByText("Captain 收到了 Codex CLI 的第一轮回应：Captain will start by reviewing the workspace and outlining the first build step.")
+    ).toBeTruthy();
     expect(useAppStore.getState().activeMissionId).toBe("mission-123");
     expect(screen.getByTestId("location-path").textContent).toBe("/team/mission-123");
   });
 
   it("lets the tester override the workspace path before starting a mission", async () => {
-    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
+    useAppStore.setState({
+      activeMissionId: null,
+      timelineItems: [],
+      language: "zh-CN",
+      recentMissions: [],
+      runtimeStatus: null,
+      codexSmokeTestResult: null,
+      isCodexSmokeTestRunning: false
+    });
     const getDefaultWorkspacePath = vi.fn().mockResolvedValue("D:/default-workspace");
     const startMission = vi.fn().mockResolvedValue({
       mission: {
@@ -209,6 +238,7 @@ describe("TeamRoomPage", () => {
       configurable: true,
       value: {
         getDefaultWorkspacePath,
+        runCodexSmokeTest: vi.fn(),
         startMission
       }
     });
@@ -239,13 +269,22 @@ describe("TeamRoomPage", () => {
   });
 
   it("does not let a delayed default workspace overwrite a manual workspace path", async () => {
-    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
+    useAppStore.setState({
+      activeMissionId: null,
+      timelineItems: [],
+      language: "zh-CN",
+      recentMissions: [],
+      runtimeStatus: null,
+      codexSmokeTestResult: null,
+      isCodexSmokeTestRunning: false
+    });
     const deferredDefaultWorkspace = createDeferredPromise<string>();
 
     Object.defineProperty(window, "winTogether", {
       configurable: true,
       value: {
         getDefaultWorkspacePath: vi.fn().mockReturnValue(deferredDefaultWorkspace.promise),
+        runCodexSmokeTest: vi.fn(),
         startMission: vi.fn()
       }
     });
@@ -279,7 +318,15 @@ describe("TeamRoomPage", () => {
   });
 
   it("shows a visible error when mission start fails and keeps the tester on the draft route", async () => {
-    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
+    useAppStore.setState({
+      activeMissionId: null,
+      timelineItems: [],
+      language: "zh-CN",
+      recentMissions: [],
+      runtimeStatus: null,
+      codexSmokeTestResult: null,
+      isCodexSmokeTestRunning: false
+    });
     const getDefaultWorkspacePath = vi.fn().mockResolvedValue("D:/default-workspace");
     const startMission = vi.fn().mockRejectedValue(new Error("Captain could not start the mission."));
 
@@ -287,6 +334,7 @@ describe("TeamRoomPage", () => {
       configurable: true,
       value: {
         getDefaultWorkspacePath,
+        runCodexSmokeTest: vi.fn(),
         startMission
       }
     });
@@ -312,7 +360,15 @@ describe("TeamRoomPage", () => {
   });
 
   it("shows a visible bridge error instead of crashing when the preload API is unavailable", async () => {
-    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
+    useAppStore.setState({
+      activeMissionId: null,
+      timelineItems: [],
+      language: "zh-CN",
+      recentMissions: [],
+      runtimeStatus: null,
+      codexSmokeTestResult: null,
+      isCodexSmokeTestRunning: false
+    });
     Object.defineProperty(window, "winTogether", {
       configurable: true,
       value: undefined

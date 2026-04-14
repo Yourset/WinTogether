@@ -46,6 +46,16 @@ export class AppRuntimeImpl implements AppRuntime {
       goal: input.goal,
       workspacePath
     });
+    const cliResult = await this.codexCliAdapter.runSmokePrompt(
+      workspacePath,
+      this.buildCaptainPrompt(input.goal)
+    );
+
+    this.missionOrchestrator.publishCaptainMessage(
+      result.mission.id,
+      result.captain.id,
+      cliResult.status === "success" ? cliResult.message : `cli.error:${cliResult.message}`
+    );
 
     const transcriptStatus = await this.persistMissionStart(result).catch(() => "failed" as const);
 
@@ -68,6 +78,14 @@ export class AppRuntimeImpl implements AppRuntime {
     return {
       codexCli: await this.codexCliAdapter.checkHealth(this.workspaceManager.getRootPath())
     };
+  }
+
+  async runCodexSmokeTest(prompt = 'Reply with a short "Codex CLI is working." message.'): Promise<{
+    status: "success" | "error";
+    message: string;
+    rawOutput: string;
+  }> {
+    return this.codexCliAdapter.runSmokePrompt(this.workspaceManager.getRootPath(), prompt);
   }
 
   async getMemoryOverview(): Promise<AppMemoryOverview> {
@@ -95,5 +113,14 @@ export class AppRuntimeImpl implements AppRuntime {
     }
 
     return false;
+  }
+
+  private buildCaptainPrompt(goal: string) {
+    return [
+      "You are Captain inside Win Together.",
+      `The user goal is: ${goal}`,
+      "Reply with a short first-step plan in plain text.",
+      "Do not use bullet points."
+    ].join(" ");
   }
 }

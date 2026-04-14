@@ -73,4 +73,17 @@ export class MissionOrchestrator {
 
     return { mission, captain };
   }
+
+  publishCaptainMessage(missionId: string, captainId: string, text: string) {
+    this.eventBus.publish({
+      id: createId("event"),
+      type: "agent.message",
+      timestamp: nowIso(),
+      payload: {
+        agentId: captainId,
+        missionId,
+        text
+      }
+    });
+  }
 }

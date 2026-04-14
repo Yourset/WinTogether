@@ -6,6 +6,12 @@ export interface CodexCliHealth {
   message: string;
 }
 
+export interface CodexCliSmokeTestResult {
+  status: "success" | "error";
+  message: string;
+  rawOutput: string;
+}
+
 interface CodexCliAdapterOptions {
   runCommand?: (args: string[], cwd: string) => Promise<CodexCommandResult>;
 }
@@ -43,6 +49,31 @@ export class CodexCliAdapter implements AgentRuntimeAdapter {
       return {
         status: "unavailable",
         message: error instanceof Error ? error.message : "Unable to start Codex CLI"
+      };
+    }
+  }
+
+  async runSmokePrompt(cwd: string, prompt: string): Promise<CodexCliSmokeTestResult> {
+    try {
+      const result = await this.runCommand(
+        ["exec", "--skip-git-repo-check", "--color", "never", prompt],
+        cwd
+      );
+      const rawOutput = result.stdout || result.stderr || "";
+      const message = rawOutput || "Codex CLI returned no visible output";
+
+      return {
+        status: result.exitCode === 0 ? "success" : "error",
+        message,
+        rawOutput
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to run Codex CLI";
+
+      return {
+        status: "error",
+        message,
+        rawOutput: message
       };
     }
   }

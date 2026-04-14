@@ -22,6 +22,12 @@ export type AppStrings = {
   homeEnvironmentTitle: string;
   homeCodexReady: (message: string) => string;
   homeCodexUnavailable: (message: string) => string;
+  homeSmokeTestLabel: string;
+  homeSmokeTestIdle: string;
+  homeSmokeTestRunning: string;
+  homeSmokeTestSuccess: (message: string) => string;
+  homeSmokeTestFailed: (message: string) => string;
+  homeSmokeTestRawOutput: string;
   teamRoomTitle: string;
   missionIdLabel: string;
   missionIdUnassigned: string;
@@ -55,6 +61,8 @@ export type AppStrings = {
   captainJoined: (name: string) => string;
   captainPlanning: (goal: string) => string;
   captainSummary: (goal: string) => string;
+  captainCliResponse: (message: string) => string;
+  captainCliFailure: (message: string) => string;
 };
 
 const zhCN: AppStrings = {
@@ -73,12 +81,18 @@ const zhCN: AppStrings = {
   runtimeReady: "已就绪",
   runtimeUnavailable: "未就绪",
   homeTitle: "把目标交给 Captain",
-  homeIntro: "描述你现在想推进的任务，Captain 会先接需求、拆计划，然后在合适的时候拉起需要的专业 Agent。",
+  homeIntro: "描述你现在想推进的任务。Captain 会先接需求、拆计划，然后在合适的时候拉起需要的专业 Agent。",
   homeHint: "建议直接写一句清楚的目标，例如“先做登录流程并给我一个可运行的第一版”。",
   homeSubmit: "开始协作",
   homeEnvironmentTitle: "开发环境",
   homeCodexReady: (message) => `Codex CLI 已就绪：${message}`,
   homeCodexUnavailable: (message) => `Codex CLI 未就绪：${message}`,
+  homeSmokeTestLabel: "测试 Codex CLI",
+  homeSmokeTestIdle: "先跑一次最小测试，确认 Codex CLI 不只是显示就绪，而是真的能返回结果。",
+  homeSmokeTestRunning: "正在测试 Codex CLI，请稍等...",
+  homeSmokeTestSuccess: (message) => `Codex CLI 测试成功：${message}`,
+  homeSmokeTestFailed: (message) => `Codex CLI 测试失败：${message}`,
+  homeSmokeTestRawOutput: "CLI 原始返回",
   teamRoomTitle: "团队协作室",
   missionIdLabel: "任务 ID",
   missionIdUnassigned: "未分配",
@@ -111,7 +125,9 @@ const zhCN: AppStrings = {
   missionStarted: (goal) => `任务“${goal}”已启动。`,
   captainJoined: (name) => `${name} 已加入当前协作室。`,
   captainPlanning: (goal) => `Captain 正在为这个目标规划下一步：${goal}`,
-  captainSummary: (goal) => `Captain 已给出第一版执行摘要，接下来会围绕“${goal}”继续组织协作。`
+  captainSummary: (goal) => `Captain 已给出第一版执行摘要，接下来会围绕“${goal}”继续组织协作。`,
+  captainCliResponse: (message) => `Captain 收到了 Codex CLI 的第一轮回应：${message}`,
+  captainCliFailure: (message) => `Captain 尝试调用 Codex CLI 时遇到问题：${message}`
 };
 
 const en: AppStrings = {
@@ -136,6 +152,12 @@ const en: AppStrings = {
   homeEnvironmentTitle: "Environment",
   homeCodexReady: (message) => `Codex CLI ready: ${message}`,
   homeCodexUnavailable: (message) => `Codex CLI unavailable: ${message}`,
+  homeSmokeTestLabel: "Test Codex CLI",
+  homeSmokeTestIdle: "Run a minimal smoke test first so we know Codex CLI can actually return a result.",
+  homeSmokeTestRunning: "Running the Codex CLI smoke test...",
+  homeSmokeTestSuccess: (message) => `Codex CLI test succeeded: ${message}`,
+  homeSmokeTestFailed: (message) => `Codex CLI test failed: ${message}`,
+  homeSmokeTestRawOutput: "Raw CLI output",
   teamRoomTitle: "Team Room",
   missionIdLabel: "Mission ID",
   missionIdUnassigned: "Unassigned",
@@ -168,7 +190,9 @@ const en: AppStrings = {
   missionStarted: (goal) => `Mission "${goal}" started.`,
   captainJoined: (name) => `${name} joined the current room.`,
   captainPlanning: (goal) => `Captain is planning the next steps for: ${goal}`,
-  captainSummary: (goal) => `Captain has posted the first execution summary for "${goal}".`
+  captainSummary: (goal) => `Captain has posted the first execution summary for "${goal}".`,
+  captainCliResponse: (message) => `Captain received the first Codex CLI response: ${message}`,
+  captainCliFailure: (message) => `Captain hit a Codex CLI problem: ${message}`
 };
 
 export function getStrings(language: AppLanguage): AppStrings {

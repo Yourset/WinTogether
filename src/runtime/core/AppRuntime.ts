@@ -1,12 +1,13 @@
 import type { AgentRecord } from "../../shared/contracts/agent";
 import type { AppEvent } from "../../shared/contracts/events";
 import type { MissionRecord } from "../../shared/contracts/mission";
-import type { CodexCliHealth } from "../adapters/CodexCliAdapter";
+import type { CodexCliHealth, CodexCliSmokeTestResult } from "../adapters/CodexCliAdapter";
 import type { StartMissionInput, StartMissionResult } from "./MissionOrchestrator";
 import type { RecentMissionRecord } from "./TranscriptStore";
 
 export interface AppRuntime {
   startMission(input: StartMissionInput): Promise<AppRuntimeMissionStartResult>;
+  runCodexSmokeTest?(prompt?: string): Promise<CodexCliSmokeTestResult>;
   getMemoryOverview?(): Promise<AppMemoryOverview>;
   getRecentMissions?(): Promise<RecentMissionRecord[]>;
   getRuntimeStatus?(): Promise<AppRuntimeStatus>;
@@ -20,6 +21,8 @@ export type AppRecentMission = RecentMissionRecord;
 export interface AppRuntimeStatus {
   codexCli: CodexCliHealth;
 }
+
+export interface AppRuntimeSmokeTestResult extends CodexCliSmokeTestResult {}
 
 export interface AppMemoryOverview {
   indexContent: string;

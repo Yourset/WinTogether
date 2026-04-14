@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Menu } from "electron";
 
 import { registerAppIpc } from "./ipc/registerAppIpc";
 import { AppRuntimeService } from "./services/runtime/AppRuntimeService";
@@ -62,6 +62,7 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  Menu.setApplicationMenu(null);
   registerAppIpc({
     runtimeService,
     workspacePickerService
