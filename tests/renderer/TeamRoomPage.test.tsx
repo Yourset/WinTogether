@@ -31,7 +31,7 @@ describe("TeamRoomPage", () => {
   });
 
   it("shows the team room layout with timeline, agents, context, and composer", () => {
-    useAppStore.setState({ activeMissionId: null, timelineItems: [] });
+    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
     Object.defineProperty(window, "winTogether", {
       configurable: true,
       value: {
@@ -48,17 +48,17 @@ describe("TeamRoomPage", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("Team Room")).toBeTruthy();
-    expect(screen.getByText("Mission ID: mission-42")).toBeTruthy();
-    expect(screen.getByText("Timeline")).toBeTruthy();
-    expect(screen.getByText("Agents")).toBeTruthy();
-    expect(screen.getByText("Context")).toBeTruthy();
-    expect(screen.getByPlaceholderText("Tell Captain the goal...")).toBeTruthy();
+    expect(screen.getByText("团队协作室")).toBeTruthy();
+    expect(screen.getByText("任务 ID：mission-42")).toBeTruthy();
+    expect(screen.getByText("协作时间线")).toBeTruthy();
+    expect(screen.getByText("当前成员")).toBeTruthy();
+    expect(screen.getByText("当前上下文")).toBeTruthy();
+    expect(screen.getByPlaceholderText("告诉 Captain 你的目标...")).toBeTruthy();
     expect(useAppStore.getState().activeMissionId).toBe("mission-42");
   });
 
   it("starts a mission from the composer and appends captain updates to the timeline", async () => {
-    useAppStore.setState({ activeMissionId: null, timelineItems: [] });
+    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
     const getDefaultWorkspacePath = vi
       .fn()
       .mockResolvedValue("D:/development/WinTogether2/.worktrees/feature-v1-foundation");
@@ -102,16 +102,16 @@ describe("TeamRoomPage", () => {
     );
 
     await waitFor(() => {
-      expect((screen.getByLabelText("Workspace path") as HTMLInputElement).value).toBe(
+      expect((screen.getByLabelText("工作区路径") as HTMLInputElement).value).toBe(
         "D:/development/WinTogether2/.worktrees/feature-v1-foundation"
       );
     });
-    expect(screen.getByText(/Using the default workspace provided by the app:/)).toBeTruthy();
+    expect(screen.getByText("当前使用应用提供的默认工作区；如果你想切换到别的项目，可以直接改这里。")).toBeTruthy();
 
-    fireEvent.change(screen.getByPlaceholderText("Tell Captain the goal..."), {
+    fireEvent.change(screen.getByPlaceholderText("告诉 Captain 你的目标..."), {
       target: { value: "Ship the first loop" }
     });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    fireEvent.click(screen.getByRole("button", { name: "开始执行" }));
 
     await waitFor(() => {
       expect(startMission).toHaveBeenCalledWith({
@@ -121,14 +121,14 @@ describe("TeamRoomPage", () => {
     });
 
     expect(getDefaultWorkspacePath).toHaveBeenCalledTimes(1);
-    expect(await screen.findByText('Mission "Ship the first loop" started.')).toBeTruthy();
-    expect(await screen.findByText("Captain is planning the next steps for: Ship the first loop")).toBeTruthy();
+    expect(await screen.findByText("任务“Ship the first loop”已启动。")).toBeTruthy();
+    expect(await screen.findByText("Captain 正在为这个目标规划下一步：Ship the first loop")).toBeTruthy();
     expect(useAppStore.getState().activeMissionId).toBe("mission-123");
     expect(screen.getByTestId("location-path").textContent).toBe("/team/mission-123");
   });
 
   it("lets the tester override the workspace path before starting a mission", async () => {
-    useAppStore.setState({ activeMissionId: null, timelineItems: [] });
+    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
     const getDefaultWorkspacePath = vi.fn().mockResolvedValue("D:/default-workspace");
     const startMission = vi.fn().mockResolvedValue({
       mission: {
@@ -168,14 +168,14 @@ describe("TeamRoomPage", () => {
       </MemoryRouter>
     );
 
-    const workspaceField = await screen.findByLabelText("Workspace path");
+    const workspaceField = await screen.findByLabelText("工作区路径");
     fireEvent.change(workspaceField, {
       target: { value: "D:/manual-override" }
     });
-    fireEvent.change(screen.getByPlaceholderText("Tell Captain the goal..."), {
+    fireEvent.change(screen.getByPlaceholderText("告诉 Captain 你的目标..."), {
       target: { value: "Test override" }
     });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    fireEvent.click(screen.getByRole("button", { name: "开始执行" }));
 
     await waitFor(() => {
       expect(startMission).toHaveBeenCalledWith({
@@ -186,7 +186,7 @@ describe("TeamRoomPage", () => {
   });
 
   it("does not let a delayed default workspace overwrite a manual workspace path", async () => {
-    useAppStore.setState({ activeMissionId: null, timelineItems: [] });
+    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
     const deferredDefaultWorkspace = createDeferredPromise<string>();
 
     Object.defineProperty(window, "winTogether", {
@@ -205,16 +205,16 @@ describe("TeamRoomPage", () => {
       </MemoryRouter>
     );
 
-    const workspaceField = screen.getByLabelText("Workspace path") as HTMLInputElement;
+    const workspaceField = screen.getByLabelText("工作区路径") as HTMLInputElement;
     expect(workspaceField.value).toBe("");
-    expect(screen.getByText("Loading the app default workspace...")).toBeTruthy();
+    expect(screen.getByText("正在读取应用默认工作区...")).toBeTruthy();
 
     fireEvent.change(workspaceField, {
       target: { value: "D:/manual-before-default" }
     });
 
     await waitFor(() => {
-      expect(screen.getByText("Using a workspace path you entered for this mission.")).toBeTruthy();
+      expect(screen.getByText("当前使用你手动输入的工作区路径。")).toBeTruthy();
     });
 
     deferredDefaultWorkspace.resolve("D:/late-default");
@@ -222,11 +222,11 @@ describe("TeamRoomPage", () => {
     await waitFor(() => {
       expect(workspaceField.value).toBe("D:/manual-before-default");
     });
-    expect(screen.getByText("Using a workspace path you entered for this mission.")).toBeTruthy();
+    expect(screen.getByText("当前使用你手动输入的工作区路径。")).toBeTruthy();
   });
 
   it("shows a visible error when mission start fails and keeps the tester on the draft route", async () => {
-    useAppStore.setState({ activeMissionId: null, timelineItems: [] });
+    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
     const getDefaultWorkspacePath = vi.fn().mockResolvedValue("D:/default-workspace");
     const startMission = vi.fn().mockRejectedValue(new Error("Captain could not start the mission."));
 
@@ -247,11 +247,11 @@ describe("TeamRoomPage", () => {
       </MemoryRouter>
     );
 
-    await screen.findByLabelText("Workspace path");
-    fireEvent.change(screen.getByPlaceholderText("Tell Captain the goal..."), {
+    await screen.findByLabelText("工作区路径");
+    fireEvent.change(screen.getByPlaceholderText("告诉 Captain 你的目标..."), {
       target: { value: "Trigger failure" }
     });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    fireEvent.click(screen.getByRole("button", { name: "开始执行" }));
 
     expect((await screen.findByRole("alert")).textContent).toContain("Captain could not start the mission.");
     expect(screen.getByTestId("location-path").textContent).toBe("/team/draft");

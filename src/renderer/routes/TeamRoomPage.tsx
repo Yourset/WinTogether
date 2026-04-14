@@ -5,13 +5,16 @@ import { ContextPanel } from "../components/team-room/ContextPanel";
 import { MessageTimeline } from "../components/team-room/MessageTimeline";
 import { MissionComposer } from "../components/team-room/MissionComposer";
 import { RosterPanel } from "../components/team-room/RosterPanel";
+import { getStrings } from "../i18n";
 import { useAppStore } from "../store/appStore";
 
 export function TeamRoomPage() {
   const { missionId } = useParams();
   const activeMissionId = useAppStore((state) => state.activeMissionId);
+  const language = useAppStore((state) => state.language);
   const setActiveMissionId = useAppStore((state) => state.setActiveMissionId);
   const timelineItems = useAppStore((state) => state.timelineItems);
+  const strings = getStrings(language);
 
   useEffect(() => {
     setActiveMissionId(missionId ?? null);
@@ -22,14 +25,16 @@ export function TeamRoomPage() {
 
   return (
     <section>
-      <h1>Team Room</h1>
-      <p>Mission ID: {currentMissionId ?? "Unassigned"}</p>
+      <h1>{strings.teamRoomTitle}</h1>
+      <p>
+        {strings.missionIdLabel}：{currentMissionId ?? strings.missionIdUnassigned}
+      </p>
       <div
         style={{
           display: "grid",
           gap: "1.5rem",
           gridTemplateColumns: "minmax(14rem, 18rem) minmax(0, 1fr) minmax(16rem, 20rem)",
-          alignItems: "start",
+          alignItems: "start"
         }}
       >
         <RosterPanel agents={agents} />
@@ -37,13 +42,13 @@ export function TeamRoomPage() {
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "1rem",
+            gap: "1rem"
           }}
         >
           <MessageTimeline items={timelineItems} />
           <MissionComposer />
         </div>
-        <ContextPanel missionId={currentMissionId} focus="Align on the next mission step." />
+        <ContextPanel missionId={currentMissionId} focus={strings.contextFocusValue} />
       </div>
     </section>
   );

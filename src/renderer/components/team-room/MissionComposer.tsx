@@ -1,14 +1,15 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { getStrings } from "../../i18n";
 import { useAppStore } from "../../store/appStore";
 
-function getErrorMessage(error: unknown) {
+function getErrorMessage(error: unknown, fallbackMessage: string) {
   if (error instanceof Error && error.message.trim()) {
     return error.message;
   }
 
-  return "Mission start failed. Check the workspace path and try again.";
+  return fallbackMessage;
 }
 
 export function MissionComposer() {
@@ -20,7 +21,9 @@ export function MissionComposer() {
   const [workspaceSource, setWorkspaceSource] = useState<"loading" | "default" | "manual" | "missing">("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isStartingMission, setIsStartingMission] = useState(false);
+  const language = useAppStore((state) => state.language);
   const recordMissionStarted = useAppStore((state) => state.recordMissionStarted);
+  const strings = getStrings(language);
 
   useEffect(() => {
     let isMounted = true;
@@ -43,13 +46,13 @@ export function MissionComposer() {
 
         setWorkspacePath("");
         setWorkspaceSource("missing");
-        setErrorMessage(`Default workspace unavailable: ${getErrorMessage(error)}`);
+        setErrorMessage(getErrorMessage(error, strings.startMissionFallbackError));
       });
 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [strings.startMissionFallbackError]);
 
   const handleSubmit = async () => {
     const nextGoal = goal.trim();
@@ -72,7 +75,7 @@ export function MissionComposer() {
       setGoal("");
       navigate(`/team/${result.mission.id}`);
     } catch (error) {
-      setErrorMessage(getErrorMessage(error));
+      setErrorMessage(getErrorMessage(error, strings.startMissionFallbackError));
     } finally {
       setIsStartingMission(false);
     }
@@ -80,23 +83,23 @@ export function MissionComposer() {
 
   const workspaceStatusMessage =
     workspaceSource === "loading"
-      ? "Loading the app default workspace..."
+      ? strings.workspaceLoading
       : workspaceSource === "default"
-        ? "Using the default workspace provided by the app: edit it here if you want to override it for this mission."
+        ? strings.workspaceDefault
         : workspaceSource === "manual"
-          ? "Using a workspace path you entered for this mission."
-          : "No default workspace is available. Enter a workspace path before starting the mission.";
+          ? strings.workspaceManual
+          : strings.workspaceMissing;
 
   return (
     <section aria-labelledby="team-room-composer">
-      <h2 id="team-room-composer">Mission Composer</h2>
+      <h2 id="team-room-composer">{strings.composerTitle}</h2>
       <div>
-        <label htmlFor={workspaceInputId}>Workspace path</label>
+        <label htmlFor={workspaceInputId}>{strings.workspaceLabel}</label>
         <input
           id={workspaceInputId}
           type="text"
           value={workspacePath}
-          placeholder="Enter a workspace path"
+          placeholder={strings.workspacePlaceholder}
           onChange={(event) => {
             hasManualWorkspaceEdit.current = true;
             setWorkspacePath(event.target.value);
@@ -107,7 +110,7 @@ export function MissionComposer() {
         <p>{workspaceStatusMessage}</p>
       </div>
       <textarea
-        placeholder="Tell Captain the goal..."
+        placeholder={strings.goalPlaceholder}
         rows={5}
         value={goal}
         onChange={(event) => {
@@ -121,7 +124,7 @@ export function MissionComposer() {
         onClick={() => void handleSubmit()}
         disabled={isStartingMission || workspaceSource === "loading" || !workspacePath.trim()}
       >
-        Send
+        {strings.send}
       </button>
     </section>
   );
