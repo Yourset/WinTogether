@@ -13,11 +13,11 @@ export interface CodexCliSmokeTestResult {
 }
 
 interface CodexCliAdapterOptions {
-  runCommand?: (args: string[], cwd: string) => Promise<CodexCommandResult>;
+  runCommand?: (args: string[], cwd: string, stdinText?: string) => Promise<CodexCommandResult>;
 }
 
 export class CodexCliAdapter implements AgentRuntimeAdapter {
-  private readonly runCommand: (args: string[], cwd: string) => Promise<CodexCommandResult>;
+  private readonly runCommand: (args: string[], cwd: string, stdinText?: string) => Promise<CodexCommandResult>;
 
   constructor(options: CodexCliAdapterOptions = {}) {
     this.runCommand = options.runCommand ?? runCodexCommand;
@@ -56,8 +56,9 @@ export class CodexCliAdapter implements AgentRuntimeAdapter {
   async runSmokePrompt(cwd: string, prompt: string): Promise<CodexCliSmokeTestResult> {
     try {
       const result = await this.runCommand(
-        ["exec", "--skip-git-repo-check", "--color", "never", prompt],
-        cwd
+        ["exec", "--skip-git-repo-check", "--color", "never", "-"],
+        cwd,
+        prompt
       );
       const rawOutput = result.stdout || result.stderr || "";
       const message = rawOutput || "Codex CLI returned no visible output";

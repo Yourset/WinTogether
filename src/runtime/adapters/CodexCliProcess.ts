@@ -14,7 +14,7 @@ export interface CodexCommandResult {
   stderr: string;
 }
 
-export function runCodexCommand(args: string[], cwd: string): Promise<CodexCommandResult> {
+export function runCodexCommand(args: string[], cwd: string, stdinText?: string): Promise<CodexCommandResult> {
   return new Promise((resolve, reject) => {
     const child = spawnCodexProcess(args, cwd);
     let stdout = "";
@@ -31,6 +31,11 @@ export function runCodexCommand(args: string[], cwd: string): Promise<CodexComma
     child.once("error", (error) => {
       reject(error);
     });
+
+    if (stdinText !== undefined) {
+      child.stdin.write(stdinText);
+      child.stdin.end();
+    }
 
     child.once("close", (code) => {
       resolve({

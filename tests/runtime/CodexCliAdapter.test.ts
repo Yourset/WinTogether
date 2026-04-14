@@ -14,10 +14,18 @@ function createMockProcess() {
   const process = new EventEmitter() as EventEmitter & {
     stdout: EventEmitter;
     stderr: EventEmitter;
+    stdin: {
+      write: ReturnType<typeof vi.fn>;
+      end: ReturnType<typeof vi.fn>;
+    };
   };
 
   process.stdout = new EventEmitter();
   process.stderr = new EventEmitter();
+  process.stdin = {
+    write: vi.fn(),
+    end: vi.fn()
+  };
 
   return process;
 }
@@ -90,5 +98,7 @@ describe("CodexCliAdapter", () => {
       message: "Codex CLI is working.",
       rawOutput: "Codex CLI is working."
     });
+    expect(child.stdin.write).toHaveBeenCalledWith("Say hello");
+    expect(child.stdin.end).toHaveBeenCalledTimes(1);
   });
 });
