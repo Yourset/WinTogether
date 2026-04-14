@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, stat, mkdir } from "node:fs/promises";
+import { mkdtemp, readFile, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -9,14 +9,19 @@ describe("MemoryManager", () => {
     const rootPath = await mkdtemp(join(tmpdir(), "memory-manager-"));
     const memoryManager = new MemoryManager(rootPath);
 
-    await mkdir(join(rootPath, "WIN_MEMORY"), { recursive: true });
-
     await memoryManager.ensureBaseStructure();
     await memoryManager.appendWorkLog("task 3 started");
 
     await expect(stat(join(rootPath, "WIN_MEMORY", "INDEX.md"))).resolves.toBeTruthy();
 
     const workLog = await readFile(join(rootPath, "WIN_MEMORY", "work-log", "current.md"), "utf8");
-    expect(workLog).toContain("task 3 started");
+    expect(workLog.trimEnd().split(/\r?\n/)).toEqual([
+      "# Current Work Log",
+      "",
+      "## Entries",
+      "",
+      "- Initialized work log.",
+      "- task 3 started"
+    ]);
   });
 });
