@@ -1,6 +1,6 @@
 import { EventBus } from "./EventBus";
 import { MissionOrchestrator, type StartMissionInput, type StartMissionResult } from "./MissionOrchestrator";
-import { TranscriptStore } from "./TranscriptStore";
+import { TranscriptStore, type RecentMissionRecord } from "./TranscriptStore";
 import { WorkspaceManager } from "./WorkspaceManager";
 import type { AppRuntime, AppRuntimeMissionStartResult } from "./AppRuntime";
 
@@ -45,10 +45,16 @@ export class AppRuntimeImpl implements AppRuntime {
     };
   }
 
+  async getRecentMissions(): Promise<RecentMissionRecord[]> {
+    return this.transcriptStore.listRecentMissions();
+  }
+
   private async persistMissionStart(result: StartMissionResult) {
     await this.transcriptStore.appendEntry({
       missionId: result.mission.id,
-      message: `Started mission: ${result.mission.goal}`
+      mission: result.mission,
+      message: `Started mission: ${result.mission.goal}`,
+      timestamp: result.mission.createdAt
     });
 
     return "written" as const;

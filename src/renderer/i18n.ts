@@ -39,6 +39,7 @@ export type AppStrings = {
   systemActor: string;
   historyTitle: string;
   historyIntro: string;
+  historyOpenRoom: string;
   memoryTitle: string;
   memoryIntro: string;
   missionStarted: (goal: string) => string;
@@ -84,6 +85,7 @@ const zhCN: AppStrings = {
   systemActor: "系统",
   historyTitle: "任务记录",
   historyIntro: "这里会展示过去的任务、阶段总结和结果回顾。",
+  historyOpenRoom: "进入协作室",
   memoryTitle: "记忆中心",
   memoryIntro: "这里会展示项目记忆、团队记忆和关键上下文沉淀。",
   missionStarted: (goal) => `任务“${goal}”已启动。`,
@@ -129,6 +131,7 @@ const en: AppStrings = {
   systemActor: "System",
   historyTitle: "Mission History",
   historyIntro: "Review past missions, stage summaries, and outcomes here.",
+  historyOpenRoom: "Open room",
   memoryTitle: "Memory Center",
   memoryIntro: "Inspect project memory, team memory, and saved context here.",
   missionStarted: (goal) => `Mission "${goal}" started.`,

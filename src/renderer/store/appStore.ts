@@ -19,6 +19,11 @@ export interface StartMissionResult {
   };
 }
 
+export interface RecentMissionRecord extends MissionRecord {
+  summary?: string;
+  lastUpdatedAt?: string;
+}
+
 export interface TimelineItem {
   id: string;
   actor: string;
@@ -28,6 +33,7 @@ export interface TimelineItem {
 
 export interface WinTogetherApi {
   getDefaultWorkspacePath(): Promise<string>;
+  getRecentMissions?(): Promise<RecentMissionRecord[]>;
   startMission(input: StartMissionInput): Promise<StartMissionResult>;
 }
 
@@ -40,12 +46,13 @@ declare global {
 type AppState = {
   activeMissionId: string | null;
   timelineItems: TimelineItem[];
-  recentMissions: MissionRecord[];
+  recentMissions: RecentMissionRecord[];
   currentWorkspacePath: string | null;
   language: AppLanguage;
   setLanguage: (language: AppLanguage) => void;
   setActiveMissionId: (missionId: string | null) => void;
   setCurrentWorkspacePath: (workspacePath: string | null) => void;
+  setRecentMissions: (recentMissions: RecentMissionRecord[]) => void;
   recordMissionStarted: (result: StartMissionResult) => void;
 };
 
@@ -56,7 +63,7 @@ function formatTimelineTime(timestamp: string) {
   });
 }
 
-function mergeRecentMissions(previous: MissionRecord[], mission: MissionRecord) {
+function mergeRecentMissions(previous: RecentMissionRecord[], mission: RecentMissionRecord) {
   return [mission, ...previous.filter((item) => item.id !== mission.id)].slice(0, 8);
 }
 
@@ -69,6 +76,7 @@ export const useAppStore = create<AppState>()((set) => ({
   setLanguage: (language) => set({ language }),
   setActiveMissionId: (missionId) => set({ activeMissionId: missionId }),
   setCurrentWorkspacePath: (workspacePath) => set({ currentWorkspacePath: workspacePath?.trim() ? workspacePath.trim() : null }),
+  setRecentMissions: (recentMissions) => set({ recentMissions: recentMissions.slice(0, 8) }),
   recordMissionStarted: (result) =>
     set((state) => {
       const strings = getStrings(state.language);

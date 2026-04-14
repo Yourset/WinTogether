@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   registerRuntimeChannels,
+  runtimeGetRecentMissionsChannel,
   runtimeStartMissionChannel
 } from "../../src/main/ipc/channels/runtimeChannels";
 
@@ -28,5 +29,42 @@ describe("registerRuntimeChannels", () => {
 
     await expect(handler?.({}, payload)).resolves.toEqual({ mission: { id: "mission-123" } });
     expect(startMission).toHaveBeenCalledWith(payload);
+  });
+
+  it("registers the runtime:get-recent-missions handler when the runtime service supports it", async () => {
+    const handle = vi.fn();
+    const getRecentMissions = vi.fn().mockResolvedValue([
+      {
+        id: "mission-7",
+        title: "Login flow",
+        goal: "Build the login flow",
+        workspacePath: "D:/development/WinTogether2/.worktrees/feature-v1-foundation",
+        status: "draft",
+        createdAt: "2026-04-14T12:30:00.000Z"
+      }
+    ]);
+
+    registerRuntimeChannels(
+      { handle },
+      {
+        startMission: vi.fn(),
+        getRecentMissions
+      }
+    );
+
+    expect(handle).toHaveBeenCalledWith(runtimeGetRecentMissionsChannel, expect.any(Function));
+
+    const handler = handle.mock.calls[1]?.[1] as (() => Promise<unknown>) | undefined;
+    await expect(handler?.()).resolves.toEqual([
+      {
+        id: "mission-7",
+        title: "Login flow",
+        goal: "Build the login flow",
+        workspacePath: "D:/development/WinTogether2/.worktrees/feature-v1-foundation",
+        status: "draft",
+        createdAt: "2026-04-14T12:30:00.000Z"
+      }
+    ]);
+    expect(getRecentMissions).toHaveBeenCalledTimes(1);
   });
 });

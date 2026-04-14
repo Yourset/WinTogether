@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 
 import { getStrings } from "../../i18n";
@@ -45,9 +46,29 @@ export function AppShell() {
   const recentMissions = useAppStore((state) => state.recentMissions);
   const currentWorkspacePath = useAppStore((state) => state.currentWorkspacePath);
   const language = useAppStore((state) => state.language);
+  const setRecentMissions = useAppStore((state) => state.setRecentMissions);
   const setLanguage = useAppStore((state) => state.setLanguage);
   const strings = getStrings(language);
   const teamRoomHref = activeMissionId ? `/team/${activeMissionId}` : null;
+
+  useEffect(() => {
+    const api = window.winTogether;
+    if (!api?.getRecentMissions) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void api.getRecentMissions().then((missions) => {
+      if (!cancelled) {
+        setRecentMissions(missions);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [setRecentMissions]);
 
   return (
     <div

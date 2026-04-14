@@ -22,6 +22,7 @@ describe("AppShell workbench layout", () => {
       configurable: true,
       value: {
         getDefaultWorkspacePath: vi.fn().mockResolvedValue("D:/development/WinTogether2"),
+        getRecentMissions: vi.fn().mockResolvedValue([]),
         startMission: vi.fn()
       }
     });
@@ -96,5 +97,38 @@ describe("AppShell workbench layout", () => {
     expect(screen.getByText("Current Workspace")).toBeTruthy();
     expect(screen.getByText("Hand the goal to Captain")).toBeTruthy();
     expect(screen.getByRole("button", { name: "Start Collaboration" })).toBeTruthy();
+  });
+
+  it("hydrates the sidebar from persisted recent missions on startup", async () => {
+    Object.defineProperty(window, "winTogether", {
+      configurable: true,
+      value: {
+        getDefaultWorkspacePath: vi.fn().mockResolvedValue("D:/development/WinTogether2"),
+        getRecentMissions: vi.fn().mockResolvedValue([
+          {
+            id: "mission-7",
+            title: "Login flow",
+            goal: "Build the login flow",
+            workspacePath: "D:/development/WinTogether2",
+            status: "draft",
+            createdAt: "2026-04-14T20:00:00.000Z"
+          }
+        ]),
+        startMission: vi.fn()
+      }
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route path="/" element={<HomePage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText("Login flow")).toBeTruthy();
+    expect(screen.getByText("mission-7")).toBeTruthy();
   });
 });

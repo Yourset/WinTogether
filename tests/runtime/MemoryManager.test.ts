@@ -27,6 +27,9 @@ describe("MemoryManager", () => {
       "- 2026-04-14 user feedback checkpoint: first manual review says the UI is too English-heavy and the entry flow is unclear. Next product priority is `default Chinese + optional English switch` and a stronger guided home entry that makes the first click obvious.",
       "- 2026-04-14 localization checkpoint: the shell now defaults to Chinese, supports an English toggle, and the home page uses stronger guided entry actions so first-time testers can clearly start or resume a mission.",
       "- 2026-04-14 workbench UI checkpoint: the shell now uses a left sidebar plus right content layout, the default page is a direct mission input screen instead of link-only entry points, and the sidebar reflects current workspace plus recent missions for faster retesting.",
+      "- 2026-04-14 white-screen fix checkpoint: the Electron window now disables sandbox for the preload bridge, the renderer no longer crashes when `window.winTogether` is unavailable, and development startup logs confirm the previous preload failure is gone.",
+      "- 2026-04-14 testing milestone checkpoint: the user has confirmed the app can now launch successfully and see the main workbench. Next planning focus is to turn the current shell into a more complete testable loop with real recent missions, CLI health checks, richer Team Room events, and visible memory/history content.",
+      "- 2026-04-14 execution checkpoint: the user asked to push through the full five-step next-phase delivery plan before the next test round, with subagent-driven execution and stronger file-based coordination records.",
       "- task 3 started"
     ]);
   });
