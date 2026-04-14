@@ -9,33 +9,21 @@ import { useAppStore } from "../store/appStore";
 
 export function TeamRoomPage() {
   const { missionId } = useParams();
+  const activeMissionId = useAppStore((state) => state.activeMissionId);
   const setActiveMissionId = useAppStore((state) => state.setActiveMissionId);
+  const timelineItems = useAppStore((state) => state.timelineItems);
 
   useEffect(() => {
     setActiveMissionId(missionId ?? null);
   }, [missionId, setActiveMissionId]);
 
-  const timelineItems = [
-    {
-      id: "mission-brief",
-      actor: "Captain",
-      time: "Just now",
-      message: "Mission brief received and queued for the team.",
-    },
-    {
-      id: "status-check",
-      actor: "Navigator",
-      time: "1 min ago",
-      message: "All agents are standing by for the next objective.",
-    },
-  ];
-
   const agents = ["Captain", "Navigator", "Analyst"];
+  const currentMissionId = activeMissionId ?? missionId ?? null;
 
   return (
     <section>
       <h1>Team Room</h1>
-      <p>Mission ID: {missionId ?? "Unassigned"}</p>
+      <p>Mission ID: {currentMissionId ?? "Unassigned"}</p>
       <div
         style={{
           display: "grid",
@@ -55,7 +43,7 @@ export function TeamRoomPage() {
           <MessageTimeline items={timelineItems} />
           <MissionComposer />
         </div>
-        <ContextPanel missionId={missionId ?? null} focus="Align on the next mission step." />
+        <ContextPanel missionId={currentMissionId} focus="Align on the next mission step." />
       </div>
     </section>
   );

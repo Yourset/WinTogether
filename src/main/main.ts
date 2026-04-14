@@ -2,6 +2,19 @@ import path from "node:path";
 
 import { app, BrowserWindow } from "electron";
 
+import { registerAppIpc } from "./ipc/registerAppIpc";
+import { AppRuntimeService } from "./services/runtime/AppRuntimeService";
+import { createAppRuntime } from "./services/runtime/createAppRuntime";
+import { WorkspacePickerService } from "./services/workspace/WorkspacePickerService";
+
+const rootPath = process.cwd();
+const workspacePickerService = new WorkspacePickerService(rootPath);
+const runtimeService = new AppRuntimeService({
+  rootPath,
+  runtime: createAppRuntime(rootPath),
+  workspacePickerService
+});
+
 function createWindow() {
   const window = new BrowserWindow({
     width: 1280,
@@ -25,6 +38,11 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  registerAppIpc({
+    runtimeService,
+    workspacePickerService
+  });
+
   createWindow();
 
   app.on("activate", () => {
