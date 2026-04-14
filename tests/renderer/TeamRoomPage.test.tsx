@@ -24,9 +24,7 @@ describe("TeamRoomPage", () => {
     expect(screen.getByText("Timeline")).toBeTruthy();
     expect(screen.getByText("Agents")).toBeTruthy();
     expect(screen.getByText("Context")).toBeTruthy();
-    expect(
-      screen.getByPlaceholderText("告诉 Captain 你的目标..."),
-    ).toBeTruthy();
+    expect(screen.getByPlaceholderText("告诉 Captain 你的目标...")).toBeTruthy();
     expect(useAppStore.getState().activeMissionId).toBe("mission-42");
   });
 });
