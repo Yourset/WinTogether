@@ -1,5 +1,6 @@
-﻿export interface AgentSpawnedEventPayload {
+export interface AgentSpawnedEventPayload {
   agent: AgentRecord;
+  missionId: string;
 }
 
 export interface AgentMessageEventPayload {

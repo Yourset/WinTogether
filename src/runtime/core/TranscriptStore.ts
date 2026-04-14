@@ -11,7 +11,7 @@ export class TranscriptStore {
     return this.rootPath;
   }
 
-  async appendEntry(_entry: TranscriptEntry) {
-    return undefined;
+  async appendEntry(_entry: TranscriptEntry): Promise<void> {
+    return;
   }
 }

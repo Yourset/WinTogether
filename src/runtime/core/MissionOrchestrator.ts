@@ -15,7 +15,7 @@ export interface StartMissionResult {
 }
 
 export class MissionOrchestrator {
-  constructor(private readonly eventBus: EventBus) {}
+  constructor(public readonly eventBus: EventBus) {}
 
   async startMission(input: StartMissionInput): Promise<StartMissionResult> {
     const timestamp = nowIso();
@@ -46,7 +46,7 @@ export class MissionOrchestrator {
       id: createId("event"),
       type: "agent.spawned",
       timestamp: nowIso(),
-      payload: { agent: captain }
+      payload: { agent: captain, missionId: mission.id }
     });
 
     return { mission, captain };

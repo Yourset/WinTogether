@@ -1,3 +1,5 @@
+import { resolve } from "node:path";
+
 export class WorkspaceManager {
   constructor(private readonly rootPath: string) {}
 
@@ -6,11 +8,11 @@ export class WorkspaceManager {
   }
 
   normalizeWorkspacePath(workspacePath: string) {
-    const normalized = workspacePath.trim();
-    if (!normalized) {
+    const trimmed = workspacePath.trim();
+    if (!trimmed) {
       throw new Error("workspacePath is required");
     }
 
-    return normalized;
+    return resolve(trimmed);
   }
 }

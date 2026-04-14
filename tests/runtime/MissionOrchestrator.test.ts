@@ -5,14 +5,14 @@ import { MissionOrchestrator } from "../../src/runtime/core/MissionOrchestrator"
 describe("MissionOrchestrator", () => {
   it("emits mission.created and agent.spawned in order when a mission starts", async () => {
     const bus = new EventBus();
-    const events: string[] = [];
+    const events: Array<{ type: string; missionId?: string }> = [];
 
     bus.subscribe("mission.created", (event) => {
-      events.push(event.type);
+      events.push({ type: event.type, missionId: event.payload.mission.id });
     });
 
     bus.subscribe("agent.spawned", (event) => {
-      events.push(event.type);
+      events.push({ type: event.type, missionId: event.payload.missionId });
     });
 
     const orchestrator = new MissionOrchestrator(bus);
@@ -22,6 +22,10 @@ describe("MissionOrchestrator", () => {
       workspacePath: "D:/development/WinTogether2"
     });
 
-    expect(events).toEqual(["mission.created", "agent.spawned"]);
+    expect(events).toEqual([
+      { type: "mission.created", missionId: expect.any(String) },
+      { type: "agent.spawned", missionId: expect.any(String) }
+    ]);
+    expect(events[0]?.missionId).toBe(events[1]?.missionId);
   });
 });
