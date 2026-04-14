@@ -1,19 +1,21 @@
+import { Navigate, Route, Routes } from "react-router-dom";
+
+import { AppShell } from "./components/layout/AppShell";
+import { HomePage } from "./routes/HomePage";
+import { MemoryViewerPage } from "./routes/MemoryViewerPage";
+import { MissionHistoryPage } from "./routes/MissionHistoryPage";
+import { TeamRoomPage } from "./routes/TeamRoomPage";
+
 export function App() {
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        display: "grid",
-        placeItems: "center",
-        fontFamily: "system-ui, sans-serif",
-        background: "#0f172a",
-        color: "#e2e8f0",
-      }}
-    >
-      <section style={{ textAlign: "center", padding: "2rem" }}>
-        <h1 style={{ fontSize: "2rem", margin: 0 }}>Win Together</h1>
-        <p style={{ margin: "0.75rem 0 0" }}>Electron + React foundation is ready.</p>
-      </section>
-    </main>
+    <Routes>
+      <Route element={<AppShell />}>
+        <Route index element={<HomePage />} />
+        <Route path="team/:missionId" element={<TeamRoomPage />} />
+        <Route path="history" element={<MissionHistoryPage />} />
+        <Route path="memory" element={<MemoryViewerPage />} />
+        <Route path="*" element={<Navigate replace to="/" />} />
+      </Route>
+    </Routes>
   );
 }
