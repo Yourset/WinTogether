@@ -6,6 +6,9 @@ export class CodexCliAdapter implements AgentRuntimeAdapter {
       "Mission Goal:",
       input.missionGoal,
       "",
+      "Agent Role:",
+      input.agentRole,
+      "",
       "Scope:",
       input.scope
     ].join("\n");

@@ -1,5 +1,6 @@
 export interface BuildTaskPromptInput {
   missionGoal: string;
+  agentRole: string;
   scope: string;
 }
 
