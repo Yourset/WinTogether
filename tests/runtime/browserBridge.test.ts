@@ -99,4 +99,33 @@ describe("browserBridge", () => {
       vi.useRealTimers();
     }
   });
+
+  it("can fail a mission start through the browser bridge when the error mode is enabled", async () => {
+    vi.useFakeTimers();
+
+    try {
+      const bridge = createBrowserBridge({
+        responseDelayMs: 500,
+        failureMode: "mission-start"
+      });
+
+      const missionPromise = bridge.startMission({
+        goal: "Build the first login flow",
+        workspacePath: "D:/development/WinTogether2"
+      });
+      const rejectionAssertion = expect(missionPromise).rejects.toThrow("Mission start failed inside browser bridge.");
+
+      await vi.advanceTimersByTimeAsync(500);
+
+      await rejectionAssertion;
+      await expect(bridge.getRecentMissions?.()).resolves.toEqual([]);
+      await expect(bridge.getMemoryOverview?.()).resolves.toEqual(
+        expect.objectContaining({
+          workLogContent: expect.stringContaining("Browser bridge installed.")
+        })
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

@@ -20,6 +20,8 @@ Implemented in the current build:
 - Mission start now appends a real first Codex CLI response into the Team Room timeline
 - Browser-bridge-driven waiting states now keep the UI visibly alive during smoke tests and mission starts, and Playwright captures mid-wait screenshots for the first-user journey
 - Browser-first Playwright regression now also covers left-sidebar navigation into Mission History and Memory Center, so tester-visible browser bridge data is exercised across multiple pages instead of only the home-to-Team-Room flow
+- Browser bridge now supports explicit failure modes for tester-driven error states, including a mission-start failure path that keeps the UI pending first and then shows a visible error alert
+- Playwright now includes an error-state regression for browser-bridge-driven mission-start failure so the app can prove it does not fail silently
 - `WIN_MEMORY` document-based memory foundation with a visible Memory Viewer
 - Mission History page showing stored recent mission summaries
 - One-click Windows development launcher: `start-dev.bat`
@@ -88,5 +90,7 @@ The current tester-facing browser baseline now includes:
 - a Playwright e2e path that covers the first-user mission start journey plus left-sidebar navigation into Mission History and Memory Center
 - a Playwright waiting-state journey that verifies the UI stays visibly active while the browser bridge delays AI/CLI responses
 - a Vitest exclusion rule so Playwright specs under `tests/e2e` do not get double-collected as unit tests
+- a browser bridge error mode that can simulate mission-start or smoke-test failure without depending on the real CLI
+- a Playwright error-state journey that verifies mission-start failure is surfaced to the user with a pending state first and a visible alert afterward
 
 This document should be updated whenever Win Together reaches another tester-facing milestone.

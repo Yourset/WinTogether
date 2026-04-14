@@ -18,6 +18,7 @@ type BrowserBridgeTarget = Window & {
 export interface BrowserBridgeOptions {
   defaultWorkspacePath?: string;
   responseDelayMs?: number;
+  failureMode?: "mission-start" | "smoke-test";
 }
 
 export interface BrowserBridgeActivationInput {
@@ -39,6 +40,17 @@ function parseDelayMs(search: string | undefined) {
   const parsedDelay = Number.parseInt(rawDelay ?? "", 10);
 
   return Number.isFinite(parsedDelay) && parsedDelay > 0 ? parsedDelay : 0;
+}
+
+function parseFailureMode(search: string | undefined) {
+  const params = new URLSearchParams(search ?? "");
+  const rawFailureMode = params.get("bridge-error") ?? params.get("bridge-fail");
+
+  if (rawFailureMode === "mission-start" || rawFailureMode === "smoke-test") {
+    return rawFailureMode;
+  }
+
+  return undefined;
 }
 
 function wait(ms: number) {
@@ -167,6 +179,7 @@ export function createBrowserBridge(options: BrowserBridgeOptions = {}): WinToge
   const defaultWorkspacePath =
     options.defaultWorkspacePath ?? "D:/development/WinTogether2/.worktrees/feature-v1-foundation";
   const responseDelayMs = options.responseDelayMs ?? 0;
+  const failureMode = options.failureMode;
   const recentMissions: RecentMissionRecord[] = [];
   const memoryIndexContent = [
     "# Browser bridge",
@@ -199,6 +212,10 @@ export function createBrowserBridge(options: BrowserBridgeOptions = {}): WinToge
     runCodexSmokeTest: async (_prompt?: string): Promise<CodexSmokeTestResult> => {
       await wait(responseDelayMs);
 
+      if (failureMode === "smoke-test") {
+        throw new Error("Codex CLI smoke test failed inside browser bridge.");
+      }
+
       return {
         status: "success",
         message: "Browser bridge is ready.",
@@ -228,6 +245,10 @@ export function createBrowserBridge(options: BrowserBridgeOptions = {}): WinToge
       };
 
       await wait(responseDelayMs);
+
+      if (failureMode === "mission-start") {
+        throw new Error("Mission start failed inside browser bridge.");
+      }
 
       recentMissions.unshift(updatedMission);
       workLogContent = [
@@ -271,7 +292,8 @@ export function installBrowserBridge(targetWindow?: BrowserBridgeTarget) {
   }
 
   const bridge = createBrowserBridge({
-    responseDelayMs: parseDelayMs((resolvedWindow as { location?: { search?: string } }).location?.search)
+    responseDelayMs: parseDelayMs((resolvedWindow as { location?: { search?: string } }).location?.search),
+    failureMode: parseFailureMode((resolvedWindow as { location?: { search?: string } }).location?.search)
   });
   Object.defineProperty(resolvedWindow, "winTogether", {
     configurable: true,
