@@ -26,5 +26,6 @@
 - 2026-04-15 verification checkpoint: the new waiting-state path passed `npm run lint`, `npm test`, and `npm run test:e2e -- tests/e2e/ai-waiting.spec.ts`.
 - 2026-04-15 browser UX regression checkpoint: added a Playwright first-user path that starts a mission, then uses the left sidebar to open Mission History and Memory Center, verifying those pages show real browser bridge data and stable selector hooks instead of placeholder-only copy.
 - 2026-04-15 browser error-state checkpoint: added a browser-bridge-driven Playwright regression for mission-start failure, verified the UI shows a pending state first and then a visible mission-start error alert instead of failing silently, and kept the failure isolated to the stubbed browser bridge.
+- 2026-04-15 Electron smoke checkpoint: add a separate Playwright Electron path that builds the app and launches the real desktop shell, verifies the preload bridge is present, checks IPC methods for runtime and memory data, and confirms the main workbench renders without using the browser bridge.
 - Mission started: user asked for tomorrow date and weather (mission-1776182002619-6158b20c) by Captain in D:\development\WinTogether2\.worktrees\feature-v1-foundation
 - Mission started: user asked for today's weather (mission-1776183964124-d3505cc3) by Captain in D:\development\WinTogether2\.worktrees\feature-v1-foundation

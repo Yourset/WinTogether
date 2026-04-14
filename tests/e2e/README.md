@@ -12,6 +12,7 @@ This folder holds the browser-first user-journey checks for Win Together.
 
 - Run the browser journey tests with `npm run test:e2e`
 - Run them in a visible browser with `npm run test:e2e:headed`
+- Run the Electron smoke test with `npm run test:e2e:electron`
 
 ## What These Tests Cover
 
@@ -21,8 +22,10 @@ This folder holds the browser-first user-journey checks for Win Together.
 - Team Room handoff after a mission starts
 - Mission History and Memory Center navigation with real browser bridge data
 - Long-wait behavior for AI/CLI-style interactions
+- Real Electron shell smoke coverage for preload, IPC, and main workbench launch
 
 ## Notes
 
 - Playwright captures screenshots and traces on failure
 - Before manual or automated runs, close stale Win Together / Electron windows so old sessions do not affect the next run
+- The Electron smoke test builds the app first and then launches the real desktop shell through Playwright's Electron integration

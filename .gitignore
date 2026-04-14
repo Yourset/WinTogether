@@ -5,3 +5,5 @@ dist-electron/
 coverage/
 *.log
 out/
+test-results/
+playwright-report/

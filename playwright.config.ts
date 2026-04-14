@@ -4,6 +4,7 @@ const baseURL = "http://127.0.0.1:5173";
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  testIgnore: ["**/electron-smoke.spec.ts"],
   timeout: 120000,
   expect: {
     timeout: 15000

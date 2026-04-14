@@ -92,5 +92,6 @@ The current tester-facing browser baseline now includes:
 - a Vitest exclusion rule so Playwright specs under `tests/e2e` do not get double-collected as unit tests
 - a browser bridge error mode that can simulate mission-start or smoke-test failure without depending on the real CLI
 - a Playwright error-state journey that verifies mission-start failure is surfaced to the user with a pending state first and a visible alert afterward
+- a dedicated Electron smoke path that builds the app and launches the real desktop shell with Playwright, verifying preload access, IPC calls, and the main workbench without using the browser bridge
 
 This document should be updated whenever Win Together reaches another tester-facing milestone.
