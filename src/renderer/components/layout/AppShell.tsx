@@ -1,5 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 
+import { useAppStore } from "../../store/appStore";
+
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
   color: isActive ? "#f8fafc" : "#cbd5e1",
   textDecoration: "none",
@@ -7,6 +9,9 @@ const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
 });
 
 export function AppShell() {
+  const activeMissionId = useAppStore((state) => state.activeMissionId);
+  const teamRoomHref = activeMissionId ? `/team/${activeMissionId}` : null;
+
   return (
     <div
       style={{
@@ -34,9 +39,23 @@ export function AppShell() {
           <NavLink to="/" style={navLinkStyle} end>
             Home
           </NavLink>
-          <NavLink to="/team/demo" style={navLinkStyle}>
-            Team Room
-          </NavLink>
+          {teamRoomHref ? (
+            <NavLink to={teamRoomHref} style={navLinkStyle}>
+              Team Room
+            </NavLink>
+          ) : (
+            <span
+              aria-disabled="true"
+              title="Open a mission to access the team room"
+              style={{
+                color: "#64748b",
+                cursor: "not-allowed",
+                textDecoration: "none",
+              }}
+            >
+              Team Room
+            </span>
+          )}
           <NavLink to="/history" style={navLinkStyle}>
             History
           </NavLink>
