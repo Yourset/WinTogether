@@ -79,7 +79,7 @@ export class MemoryManager {
 export async function resolveTemplateRoot(moduleUrl: string = MODULE_URL) {
   const candidateRoots = [
     fileURLToPath(new URL("../../../WIN_MEMORY/", moduleUrl)),
-    fileURLToPath(new URL("../../WIN_MEMORY/", moduleUrl))
+    fileURLToPath(new URL("../WIN_MEMORY/", moduleUrl))
   ];
 
   for (const candidateRoot of candidateRoots) {

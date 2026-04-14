@@ -49,7 +49,7 @@ describe("MemoryManager", () => {
     await mkdir(builtMemoryRoot, { recursive: true });
     await writeFile(join(builtMemoryRoot, "INDEX.md"), "# Memory Index\n", "utf8");
 
-    const moduleUrl = pathToFileURL(join(tempRoot, "out", "main", "core", "MemoryManager.js")).toString();
+    const moduleUrl = pathToFileURL(join(tempRoot, "out", "main", "main.js")).toString();
     const resolvedRoot = await resolveTemplateRoot(moduleUrl);
 
     expect(resolvedRoot).toBe(builtMemoryRoot);
