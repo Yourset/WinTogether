@@ -2,11 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { HashRouter } from "react-router-dom";
 
-import { installBrowserBridge } from "../../tests/e2e/fixtures/browserBridge";
 import { App } from "./App";
 import "./styles.css";
+import { installBrowserBridge, shouldInstallBrowserBridge } from "./support/browserBridge";
 
-if (!navigator.userAgent.includes("Electron") && !window.winTogether) {
+if (shouldInstallBrowserBridge({ mode: import.meta.env.MODE, search: window.location.search }) && !window.winTogether) {
   installBrowserBridge(window);
 }
 

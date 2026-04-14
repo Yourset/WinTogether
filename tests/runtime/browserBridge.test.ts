@@ -1,8 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { createBrowserBridge } from "../e2e/fixtures/browserBridge";
+import { createBrowserBridge, shouldInstallBrowserBridge } from "../../src/renderer/support/browserBridge";
 
 describe("browserBridge", () => {
+  it("only enables the browser bridge in explicit browser mode or browser query params", () => {
+    expect(shouldInstallBrowserBridge({ mode: "browser", search: "" })).toBe(true);
+    expect(shouldInstallBrowserBridge({ mode: "development", search: "" })).toBe(false);
+    expect(shouldInstallBrowserBridge({ mode: "development", search: "?browser=1" })).toBe(true);
+    expect(shouldInstallBrowserBridge({ mode: "development", search: "?browser-bridge=1" })).toBe(true);
+  });
+
   it("provides a browser-mode Win Together API for renderer startup and mission flow", async () => {
     const bridge = createBrowserBridge();
 
@@ -32,6 +39,9 @@ describe("browserBridge", () => {
     expect(missionResult.events?.some((event) => event.type === "mission.created")).toBe(true);
     expect(missionResult.events?.some((event) => event.type === "agent.spawned")).toBe(true);
     expect(missionResult.events?.some((event) => event.type === "agent.message")).toBe(true);
+    expect(
+      missionResult.events?.find((event) => event.type === "memory.written")?.payload.memory.sourceEventId
+    ).toEqual(missionResult.events?.find((event) => event.type === "agent.message" && event.payload.text === "captain.summary")?.id);
 
     await expect(bridge.getRecentMissions?.()).resolves.toEqual([
       expect.objectContaining({
