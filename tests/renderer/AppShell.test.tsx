@@ -15,7 +15,8 @@ describe("AppShell workbench layout", () => {
       timelineItems: [],
       language: "zh-CN",
       recentMissions: [],
-      currentWorkspacePath: "D:/development/WinTogether2"
+      currentWorkspacePath: "D:/development/WinTogether2",
+      runtimeStatus: null
     });
 
     Object.defineProperty(window, "winTogether", {
@@ -23,6 +24,12 @@ describe("AppShell workbench layout", () => {
       value: {
         getDefaultWorkspacePath: vi.fn().mockResolvedValue("D:/development/WinTogether2"),
         getRecentMissions: vi.fn().mockResolvedValue([]),
+        getRuntimeStatus: vi.fn().mockResolvedValue({
+          codexCli: {
+            status: "ready",
+            message: "codex 1.2.3"
+          }
+        }),
         startMission: vi.fn()
       }
     });
@@ -114,6 +121,12 @@ describe("AppShell workbench layout", () => {
             createdAt: "2026-04-14T20:00:00.000Z"
           }
         ]),
+        getRuntimeStatus: vi.fn().mockResolvedValue({
+          codexCli: {
+            status: "ready",
+            message: "codex 1.2.3"
+          }
+        }),
         startMission: vi.fn()
       }
     });
@@ -130,5 +143,45 @@ describe("AppShell workbench layout", () => {
 
     expect(await screen.findByText("Login flow")).toBeTruthy();
     expect(screen.getByText("mission-7")).toBeTruthy();
+  });
+
+  it("shows the Codex CLI readiness state in the sidebar", async () => {
+    useAppStore.setState({
+      activeMissionId: null,
+      timelineItems: [],
+      language: "en",
+      recentMissions: [],
+      currentWorkspacePath: "D:/development/WinTogether2",
+      runtimeStatus: null
+    });
+
+    Object.defineProperty(window, "winTogether", {
+      configurable: true,
+      value: {
+        getDefaultWorkspacePath: vi.fn().mockResolvedValue("D:/development/WinTogether2"),
+        getRecentMissions: vi.fn().mockResolvedValue([]),
+        getRuntimeStatus: vi.fn().mockResolvedValue({
+          codexCli: {
+            status: "ready",
+            message: "codex 1.2.3"
+          }
+        }),
+        startMission: vi.fn()
+      }
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route path="/" element={<HomePage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText("Codex CLI")).toBeTruthy();
+    expect(screen.getByText("Ready")).toBeTruthy();
+    expect(screen.getByText("codex 1.2.3")).toBeTruthy();
   });
 });

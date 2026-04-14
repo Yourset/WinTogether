@@ -1,5 +1,5 @@
 import { MemoryManager } from "../../../runtime/core/MemoryManager";
-import type { AppRuntime, AppRuntimeMissionStartResult } from "../../../runtime/core/AppRuntime";
+import type { AppRuntime, AppRuntimeMissionStartResult, AppRuntimeStatus } from "../../../runtime/core/AppRuntime";
 import type { RecentMissionRecord } from "../../../runtime/core/TranscriptStore";
 import type { RuntimeStartMissionRequest } from "../../ipc/channels/runtimeChannels";
 import type { WorkspacePickerService } from "../workspace/WorkspacePickerService";
@@ -39,5 +39,16 @@ export class AppRuntimeService {
 
   async getRecentMissions(): Promise<RecentMissionRecord[]> {
     return this.options.runtime.getRecentMissions?.() ?? [];
+  }
+
+  async getRuntimeStatus(): Promise<AppRuntimeStatus> {
+    return (
+      (await this.options.runtime.getRuntimeStatus?.()) ?? {
+        codexCli: {
+          status: "unavailable",
+          message: "Codex CLI status unavailable"
+        }
+      }
+    );
   }
 }

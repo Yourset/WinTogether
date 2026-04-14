@@ -9,13 +9,19 @@ export type AppStrings = {
   navTeamRoomHint: string;
   sidebarRecentMissions: string;
   sidebarNoRecentMissions: string;
+  sidebarCodexCli: string;
   sidebarWorkspace: string;
   sidebarWorkspaceEmpty: string;
   sidebarLanguage: string;
+  runtimeReady: string;
+  runtimeUnavailable: string;
   homeTitle: string;
   homeIntro: string;
   homeHint: string;
   homeSubmit: string;
+  homeEnvironmentTitle: string;
+  homeCodexReady: (message: string) => string;
+  homeCodexUnavailable: (message: string) => string;
   teamRoomTitle: string;
   missionIdLabel: string;
   missionIdUnassigned: string;
@@ -55,13 +61,19 @@ const zhCN: AppStrings = {
   navTeamRoomHint: "先创建一个任务，才能进入当前协作室",
   sidebarRecentMissions: "最近任务",
   sidebarNoRecentMissions: "还没有最近任务，先创建一个新的目标吧。",
+  sidebarCodexCli: "Codex CLI",
   sidebarWorkspace: "当前工作区",
   sidebarWorkspaceEmpty: "尚未选择工作区",
   sidebarLanguage: "界面语言",
+  runtimeReady: "已就绪",
+  runtimeUnavailable: "未就绪",
   homeTitle: "把目标交给 Captain",
   homeIntro: "描述你现在想推进的任务，Captain 会先接需求、拆计划，然后在合适的时候拉起需要的专业 Agent。",
   homeHint: "建议直接写一句清楚的目标，例如“先做登录流程并给我一个可运行的第一版”。",
   homeSubmit: "开始协作",
+  homeEnvironmentTitle: "开发环境",
+  homeCodexReady: (message) => `Codex CLI 已就绪：${message}`,
+  homeCodexUnavailable: (message) => `Codex CLI 未就绪：${message}`,
   teamRoomTitle: "团队协作室",
   missionIdLabel: "任务 ID",
   missionIdUnassigned: "未分配",
@@ -101,13 +113,19 @@ const en: AppStrings = {
   navTeamRoomHint: "Create a mission first to open the current room",
   sidebarRecentMissions: "Recent Missions",
   sidebarNoRecentMissions: "No recent missions yet. Start with a new goal.",
+  sidebarCodexCli: "Codex CLI",
   sidebarWorkspace: "Current Workspace",
   sidebarWorkspaceEmpty: "No workspace selected yet",
   sidebarLanguage: "Language",
+  runtimeReady: "Ready",
+  runtimeUnavailable: "Unavailable",
   homeTitle: "Hand the goal to Captain",
   homeIntro: "Describe what you want to move forward. Captain will take the request, break the plan down, and assemble the right specialist agents when needed.",
   homeHint: 'Try a direct goal such as "Build the first login flow and give me a runnable first pass."',
   homeSubmit: "Start Collaboration",
+  homeEnvironmentTitle: "Environment",
+  homeCodexReady: (message) => `Codex CLI ready: ${message}`,
+  homeCodexUnavailable: (message) => `Codex CLI unavailable: ${message}`,
   teamRoomTitle: "Team Room",
   missionIdLabel: "Mission ID",
   missionIdUnassigned: "Unassigned",

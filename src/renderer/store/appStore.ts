@@ -24,6 +24,13 @@ export interface RecentMissionRecord extends MissionRecord {
   lastUpdatedAt?: string;
 }
 
+export interface RuntimeStatus {
+  codexCli: {
+    status: "ready" | "unavailable";
+    message: string;
+  };
+}
+
 export interface TimelineItem {
   id: string;
   actor: string;
@@ -34,6 +41,7 @@ export interface TimelineItem {
 export interface WinTogetherApi {
   getDefaultWorkspacePath(): Promise<string>;
   getRecentMissions?(): Promise<RecentMissionRecord[]>;
+  getRuntimeStatus?(): Promise<RuntimeStatus>;
   startMission(input: StartMissionInput): Promise<StartMissionResult>;
 }
 
@@ -47,12 +55,14 @@ type AppState = {
   activeMissionId: string | null;
   timelineItems: TimelineItem[];
   recentMissions: RecentMissionRecord[];
+  runtimeStatus: RuntimeStatus | null;
   currentWorkspacePath: string | null;
   language: AppLanguage;
   setLanguage: (language: AppLanguage) => void;
   setActiveMissionId: (missionId: string | null) => void;
   setCurrentWorkspacePath: (workspacePath: string | null) => void;
   setRecentMissions: (recentMissions: RecentMissionRecord[]) => void;
+  setRuntimeStatus: (runtimeStatus: RuntimeStatus | null) => void;
   recordMissionStarted: (result: StartMissionResult) => void;
 };
 
@@ -71,12 +81,14 @@ export const useAppStore = create<AppState>()((set) => ({
   activeMissionId: null,
   timelineItems: [],
   recentMissions: [],
+  runtimeStatus: null,
   currentWorkspacePath: null,
   language: "zh-CN",
   setLanguage: (language) => set({ language }),
   setActiveMissionId: (missionId) => set({ activeMissionId: missionId }),
   setCurrentWorkspacePath: (workspacePath) => set({ currentWorkspacePath: workspacePath?.trim() ? workspacePath.trim() : null }),
   setRecentMissions: (recentMissions) => set({ recentMissions: recentMissions.slice(0, 8) }),
+  setRuntimeStatus: (runtimeStatus) => set({ runtimeStatus }),
   recordMissionStarted: (result) =>
     set((state) => {
       const strings = getStrings(state.language);

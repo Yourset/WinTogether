@@ -30,6 +30,7 @@ describe("MemoryManager", () => {
       "- 2026-04-14 white-screen fix checkpoint: the Electron window now disables sandbox for the preload bridge, the renderer no longer crashes when `window.winTogether` is unavailable, and development startup logs confirm the previous preload failure is gone.",
       "- 2026-04-14 testing milestone checkpoint: the user has confirmed the app can now launch successfully and see the main workbench. Next planning focus is to turn the current shell into a more complete testable loop with real recent missions, CLI health checks, richer Team Room events, and visible memory/history content.",
       "- 2026-04-14 execution checkpoint: the user asked to push through the full five-step next-phase delivery plan before the next test round, with subagent-driven execution and stronger file-based coordination records.",
+      "- 2026-04-14 task 1 checkpoint: recent missions now persist through `TranscriptStore`, the sidebar hydrates from real data on startup, the history page shows stored mission summaries, and the full test suite is green again after syncing the MemoryManager template assertion.",
       "- task 3 started"
     ]);
   });

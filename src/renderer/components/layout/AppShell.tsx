@@ -44,9 +44,11 @@ function SidebarMissionLink({
 export function AppShell() {
   const activeMissionId = useAppStore((state) => state.activeMissionId);
   const recentMissions = useAppStore((state) => state.recentMissions);
+  const runtimeStatus = useAppStore((state) => state.runtimeStatus);
   const currentWorkspacePath = useAppStore((state) => state.currentWorkspacePath);
   const language = useAppStore((state) => state.language);
   const setRecentMissions = useAppStore((state) => state.setRecentMissions);
+  const setRuntimeStatus = useAppStore((state) => state.setRuntimeStatus);
   const setLanguage = useAppStore((state) => state.setLanguage);
   const strings = getStrings(language);
   const teamRoomHref = activeMissionId ? `/team/${activeMissionId}` : null;
@@ -65,10 +67,16 @@ export function AppShell() {
       }
     });
 
+    void api.getRuntimeStatus?.().then((nextRuntimeStatus) => {
+      if (!cancelled) {
+        setRuntimeStatus(nextRuntimeStatus ?? null);
+      }
+    });
+
     return () => {
       cancelled = true;
     };
-  }, [setRecentMissions]);
+  }, [setRecentMissions, setRuntimeStatus]);
 
   return (
     <div
@@ -167,6 +175,29 @@ export function AppShell() {
               ) : (
                 <p style={{ margin: 0, color: "#8da2bd", lineHeight: 1.6 }}>{strings.sidebarNoRecentMissions}</p>
               )}
+            </div>
+          </section>
+
+          <section
+            style={{
+              borderRadius: "18px",
+              padding: "1rem",
+              background: "rgba(255, 255, 255, 0.03)",
+              border: "1px solid rgba(148, 163, 184, 0.1)",
+              display: "grid",
+              gap: "0.45rem"
+            }}
+          >
+            <div style={{ fontSize: "0.85rem", color: "#8da2bd" }}>{strings.sidebarCodexCli}</div>
+            <div style={{ fontWeight: 600 }}>
+              {runtimeStatus
+                ? runtimeStatus.codexCli.status === "ready"
+                  ? strings.runtimeReady
+                  : strings.runtimeUnavailable
+                : "…"}
+            </div>
+            <div style={{ color: "#cbd5e1", lineHeight: 1.6 }}>
+              {runtimeStatus?.codexCli.message ?? strings.workspaceLoading}
             </div>
           </section>
 

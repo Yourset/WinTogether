@@ -1,7 +1,12 @@
 import { contextBridge, ipcRenderer } from "electron";
 
-import { runtimeGetRecentMissionsChannel, runtimeStartMissionChannel } from "../main/ipc/channels/runtimeChannels";
+import {
+  runtimeGetRecentMissionsChannel,
+  runtimeGetStatusChannel,
+  runtimeStartMissionChannel
+} from "../main/ipc/channels/runtimeChannels";
 import { workspaceDefaultPathChannel } from "../main/ipc/channels/workspaceChannels";
+import type { AppRuntimeStatus } from "../runtime/core/AppRuntime";
 import type { RecentMissionRecord } from "../runtime/core/TranscriptStore";
 
 interface MissionRecord {
@@ -38,12 +43,14 @@ export interface StartMissionResult {
 export interface WinTogetherApi {
   getDefaultWorkspacePath(): Promise<string>;
   getRecentMissions?(): Promise<RecentMissionRecord[]>;
+  getRuntimeStatus?(): Promise<AppRuntimeStatus>;
   startMission(input: StartMissionInput): Promise<StartMissionResult>;
 }
 
 const api: WinTogetherApi = {
   getDefaultWorkspacePath: () => ipcRenderer.invoke(workspaceDefaultPathChannel),
   getRecentMissions: () => ipcRenderer.invoke(runtimeGetRecentMissionsChannel),
+  getRuntimeStatus: () => ipcRenderer.invoke(runtimeGetStatusChannel),
   startMission: (input) => ipcRenderer.invoke(runtimeStartMissionChannel, input)
 };
 

@@ -1,8 +1,9 @@
-import type { AppRuntimeMissionStartResult } from "../../../runtime/core/AppRuntime";
+import type { AppRuntimeMissionStartResult, AppRuntimeStatus } from "../../../runtime/core/AppRuntime";
 import type { RecentMissionRecord } from "../../../runtime/core/TranscriptStore";
 
 export const runtimeStartMissionChannel = "runtime:start-mission";
 export const runtimeGetRecentMissionsChannel = "runtime:get-recent-missions";
+export const runtimeGetStatusChannel = "runtime:get-status";
 
 export interface RuntimeStartMissionRequest {
   goal: string;
@@ -12,7 +13,7 @@ export interface RuntimeStartMissionRequest {
 export interface RuntimeChannelRegistrar {
   handle: <T>(
     channel: string,
-    listener: (_event: unknown, input: RuntimeStartMissionRequest) => Promise<T> | T
+    listener: (_event: unknown, input?: RuntimeStartMissionRequest) => Promise<T> | T
   ) => void;
 }
 
@@ -24,15 +25,29 @@ export interface RuntimeRecentMissionsReader {
   getRecentMissions(): Promise<RecentMissionRecord[]>;
 }
 
+export interface RuntimeStatusReader {
+  getRuntimeStatus(): Promise<AppRuntimeStatus>;
+}
+
 export function registerRuntimeChannels(
   ipcMain: RuntimeChannelRegistrar,
-  runtimeService: RuntimeMissionStarter & Partial<RuntimeRecentMissionsReader>
+  runtimeService: RuntimeMissionStarter & Partial<RuntimeRecentMissionsReader & RuntimeStatusReader>
 ) {
-  ipcMain.handle(runtimeStartMissionChannel, (_event, input) => runtimeService.startMission(input));
+  ipcMain.handle(runtimeStartMissionChannel, (_event, input) => {
+    if (!input) {
+      throw new Error("Missing runtime:start-mission payload");
+    }
+
+    return runtimeService.startMission(input);
+  });
 
   if (runtimeService.getRecentMissions) {
     ipcMain.handle(runtimeGetRecentMissionsChannel, () =>
       Promise.resolve(runtimeService.getRecentMissions?.() ?? [])
     );
+  }
+
+  if (runtimeService.getRuntimeStatus) {
+    ipcMain.handle(runtimeGetStatusChannel, () => Promise.resolve(runtimeService.getRuntimeStatus?.()));
   }
 }

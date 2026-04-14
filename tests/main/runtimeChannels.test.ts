@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   registerRuntimeChannels,
+  runtimeGetStatusChannel,
   runtimeGetRecentMissionsChannel,
   runtimeStartMissionChannel
 } from "../../src/main/ipc/channels/runtimeChannels";
@@ -66,5 +67,34 @@ describe("registerRuntimeChannels", () => {
       }
     ]);
     expect(getRecentMissions).toHaveBeenCalledTimes(1);
+  });
+
+  it("registers the runtime:get-status handler when the runtime service supports it", async () => {
+    const handle = vi.fn();
+    const getRuntimeStatus = vi.fn().mockResolvedValue({
+      codexCli: {
+        status: "ready",
+        message: "codex 1.2.3"
+      }
+    });
+
+    registerRuntimeChannels(
+      { handle },
+      {
+        startMission: vi.fn(),
+        getRuntimeStatus
+      }
+    );
+
+    expect(handle).toHaveBeenCalledWith(runtimeGetStatusChannel, expect.any(Function));
+
+    const handler = handle.mock.calls[1]?.[1] as (() => Promise<unknown>) | undefined;
+    await expect(handler?.()).resolves.toEqual({
+      codexCli: {
+        status: "ready",
+        message: "codex 1.2.3"
+      }
+    });
+    expect(getRuntimeStatus).toHaveBeenCalledTimes(1);
   });
 });

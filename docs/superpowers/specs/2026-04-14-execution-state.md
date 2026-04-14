@@ -40,3 +40,4 @@ Execute `docs/superpowers/plans/2026-04-14-v1-next-phase-delivery.md` through Ta
 - 2026-04-14: user requested finishing the full five-step next-phase plan before the next manual test round.
 - 2026-04-14: controller started subagent-driven execution for Task 1 and read-only exploration for Tasks 3 and 4.
 - 2026-04-14: Task 1 completed. Recent missions now come from persisted transcript data, the history page shows stored summaries, and the full test suite is green.
+- 2026-04-14: Task 2 completed. Codex CLI health is checked through `codex --version`, exposed through runtime/preload, and rendered as a visible sidebar status.

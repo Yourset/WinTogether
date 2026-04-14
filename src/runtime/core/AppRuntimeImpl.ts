@@ -1,21 +1,25 @@
+import { CodexCliAdapter } from "../adapters/CodexCliAdapter";
 import { EventBus } from "./EventBus";
 import { MissionOrchestrator, type StartMissionInput, type StartMissionResult } from "./MissionOrchestrator";
 import { TranscriptStore, type RecentMissionRecord } from "./TranscriptStore";
 import { WorkspaceManager } from "./WorkspaceManager";
-import type { AppRuntime, AppRuntimeMissionStartResult } from "./AppRuntime";
+import type { AppRuntime, AppRuntimeMissionStartResult, AppRuntimeStatus } from "./AppRuntime";
 
 interface AppRuntimeDependencies {
+  codexCliAdapter: CodexCliAdapter;
   missionOrchestrator: MissionOrchestrator;
   workspaceManager: WorkspaceManager;
   transcriptStore: TranscriptStore;
 }
 
 export class AppRuntimeImpl implements AppRuntime {
+  readonly codexCliAdapter: CodexCliAdapter;
   readonly missionOrchestrator: MissionOrchestrator;
   readonly workspaceManager: WorkspaceManager;
   readonly transcriptStore: TranscriptStore;
 
   constructor(rootPath: string, dependencies: Partial<AppRuntimeDependencies> = {}) {
+    this.codexCliAdapter = dependencies.codexCliAdapter ?? new CodexCliAdapter();
     this.workspaceManager = dependencies.workspaceManager ?? new WorkspaceManager(rootPath);
     this.transcriptStore = dependencies.transcriptStore ?? new TranscriptStore(rootPath);
     this.missionOrchestrator =
@@ -47,6 +51,12 @@ export class AppRuntimeImpl implements AppRuntime {
 
   async getRecentMissions(): Promise<RecentMissionRecord[]> {
     return this.transcriptStore.listRecentMissions();
+  }
+
+  async getRuntimeStatus(): Promise<AppRuntimeStatus> {
+    return {
+      codexCli: await this.codexCliAdapter.checkHealth(this.workspaceManager.getRootPath())
+    };
   }
 
   private async persistMissionStart(result: StartMissionResult) {
