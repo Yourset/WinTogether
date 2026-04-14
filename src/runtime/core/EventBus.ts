@@ -6,6 +6,7 @@ type PublishableEvent = AppEvent<AppEventType>;
 
 export class EventBus {
   private readonly handlers = new Map<AppEventType, Set<AnyEventHandler>>();
+  private readonly events: PublishableEvent[] = [];
 
   subscribe<TType extends AppEventType>(type: TType, handler: AppEventHandler<TType>) {
     const handlers = this.handlers.get(type) ?? new Set<AnyEventHandler>();
@@ -21,6 +22,7 @@ export class EventBus {
   }
 
   publish<TType extends AppEventType>(event: AppEvent<TType>) {
+    this.events.push(event as PublishableEvent);
     const handlers = this.handlers.get(event.type);
     if (!handlers) {
       return;
@@ -33,6 +35,10 @@ export class EventBus {
         this.handleHandlerError(error, event as PublishableEvent);
       }
     }
+  }
+
+  getEvents() {
+    return [...this.events];
   }
 
   private handleHandlerError(error: unknown, event: PublishableEvent) {

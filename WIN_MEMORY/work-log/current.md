@@ -13,3 +13,4 @@
 - 2026-04-14 execution checkpoint: the user asked to push through the full five-step next-phase delivery plan before the next test round, with subagent-driven execution and stronger file-based coordination records.
 - 2026-04-14 task 1 checkpoint: recent missions now persist through `TranscriptStore`, the sidebar hydrates from real data on startup, the history page shows stored mission summaries, and the full test suite is green again after syncing the MemoryManager template assertion.
 - 2026-04-14 task 2 checkpoint: runtime now performs a real `codex --version` health check, IPC/preload exposes that status, and the sidebar shows whether Codex CLI is ready together with the returned message.
+- 2026-04-14 task 3 checkpoint: mission start now returns a structured event snapshot, EventBus keeps a readable event history, and Team Room maps mission/captain events into a more realistic collaboration timeline instead of hardcoding two local messages.

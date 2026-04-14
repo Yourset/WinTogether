@@ -3,9 +3,9 @@ import { EventBus } from "../../src/runtime/core/EventBus";
 import { MissionOrchestrator } from "../../src/runtime/core/MissionOrchestrator";
 
 describe("MissionOrchestrator", () => {
-  it("emits mission.created and agent.spawned in order when a mission starts", async () => {
+  it("emits a fuller mission event sequence when a mission starts", async () => {
     const bus = new EventBus();
-    const events: Array<{ type: string; missionId?: string }> = [];
+    const events: Array<{ type: string; missionId?: string; text?: string }> = [];
 
     bus.subscribe("mission.created", (event) => {
       events.push({ type: event.type, missionId: event.payload.mission.id });
@@ -13,6 +13,14 @@ describe("MissionOrchestrator", () => {
 
     bus.subscribe("agent.spawned", (event) => {
       events.push({ type: event.type, missionId: event.payload.missionId });
+    });
+
+    bus.subscribe("agent.message", (event) => {
+      events.push({
+        type: event.type,
+        missionId: event.payload.missionId,
+        text: event.payload.text
+      });
     });
 
     const orchestrator = new MissionOrchestrator(bus);
@@ -24,7 +32,9 @@ describe("MissionOrchestrator", () => {
 
     expect(events).toEqual([
       { type: "mission.created", missionId: expect.any(String) },
-      { type: "agent.spawned", missionId: expect.any(String) }
+      { type: "agent.spawned", missionId: expect.any(String) },
+      { type: "agent.message", missionId: expect.any(String), text: "captain.planning" },
+      { type: "agent.message", missionId: expect.any(String), text: "captain.summary" }
     ]);
     expect(events[0]?.missionId).toBe(events[1]?.missionId);
   });

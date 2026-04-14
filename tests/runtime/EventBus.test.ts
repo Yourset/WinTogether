@@ -86,4 +86,25 @@ describe("EventBus", () => {
       }
     });
   });
+
+  it("keeps a publish snapshot that can be read later", () => {
+    const bus = new EventBus();
+
+    bus.publish({
+      id: "evt-4",
+      type: "system.alert",
+      timestamp: "2026-04-14T00:00:00.000Z",
+      payload: {
+        message: "hello",
+        severity: "info"
+      }
+    });
+
+    expect(bus.getEvents()).toEqual([
+      expect.objectContaining({
+        id: "evt-4",
+        type: "system.alert"
+      })
+    ]);
+  });
 });

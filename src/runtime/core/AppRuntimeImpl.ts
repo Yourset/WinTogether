@@ -1,4 +1,5 @@
 import { CodexCliAdapter } from "../adapters/CodexCliAdapter";
+import type { AppEvent } from "../../shared/contracts/events";
 import { EventBus } from "./EventBus";
 import { MissionOrchestrator, type StartMissionInput, type StartMissionResult } from "./MissionOrchestrator";
 import { TranscriptStore, type RecentMissionRecord } from "./TranscriptStore";
@@ -41,6 +42,7 @@ export class AppRuntimeImpl implements AppRuntime {
 
     return {
       ...result,
+      events: this.eventBus.getEvents().filter((event) => this.belongsToMission(event, result.mission.id)),
       persistence: {
         transcript: {
           status: transcriptStatus
@@ -68,5 +70,17 @@ export class AppRuntimeImpl implements AppRuntime {
     });
 
     return "written" as const;
+  }
+
+  private belongsToMission(event: AppEvent, missionId: string) {
+    if (event.type === "mission.created") {
+      return event.payload.mission.id === missionId;
+    }
+
+    if ("missionId" in event.payload) {
+      return event.payload.missionId === missionId;
+    }
+
+    return false;
   }
 }

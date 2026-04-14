@@ -1,4 +1,5 @@
 import type { AgentRecord } from "../../shared/contracts/agent";
+import type { AppEvent } from "../../shared/contracts/events";
 import type { MissionRecord } from "../../shared/contracts/mission";
 import type { CodexCliHealth } from "../adapters/CodexCliAdapter";
 import type { StartMissionInput, StartMissionResult } from "./MissionOrchestrator";
@@ -26,5 +27,6 @@ export interface RuntimePersistenceStatus {
 }
 
 export interface AppRuntimeMissionStartResult extends StartMissionResult {
+  events?: AppEvent[];
   persistence: RuntimePersistenceStatus;
 }

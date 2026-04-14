@@ -49,7 +49,9 @@ export type AppStrings = {
   memoryTitle: string;
   memoryIntro: string;
   missionStarted: (goal: string) => string;
+  captainJoined: (name: string) => string;
   captainPlanning: (goal: string) => string;
+  captainSummary: (goal: string) => string;
 };
 
 const zhCN: AppStrings = {
@@ -101,7 +103,9 @@ const zhCN: AppStrings = {
   memoryTitle: "记忆中心",
   memoryIntro: "这里会展示项目记忆、团队记忆和关键上下文沉淀。",
   missionStarted: (goal) => `任务“${goal}”已启动。`,
-  captainPlanning: (goal) => `Captain 正在为这个目标规划下一步：${goal}`
+  captainJoined: (name) => `${name} 已加入当前协作室。`,
+  captainPlanning: (goal) => `Captain 正在为这个目标规划下一步：${goal}`,
+  captainSummary: (goal) => `Captain 已给出第一版执行摘要，接下来会围绕“${goal}”继续组织协作。`
 };
 
 const en: AppStrings = {
@@ -153,7 +157,9 @@ const en: AppStrings = {
   memoryTitle: "Memory Center",
   memoryIntro: "Inspect project memory, team memory, and saved context here.",
   missionStarted: (goal) => `Mission "${goal}" started.`,
-  captainPlanning: (goal) => `Captain is planning the next steps for: ${goal}`
+  captainJoined: (name) => `${name} joined the current room.`,
+  captainPlanning: (goal) => `Captain is planning the next steps for: ${goal}`,
+  captainSummary: (goal) => `Captain has posted the first execution summary for "${goal}".`
 };
 
 export function getStrings(language: AppLanguage): AppStrings {

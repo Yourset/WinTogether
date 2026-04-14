@@ -77,6 +77,57 @@ describe("TeamRoomPage", () => {
         name: "Captain",
         status: "planning"
       },
+      events: [
+        {
+          id: "event-1",
+          type: "mission.created",
+          timestamp: "2026-04-14T12:00:00.000Z",
+          payload: {
+            mission: {
+              id: "mission-123",
+              title: "Ship the first loop",
+              goal: "Ship the first loop",
+              workspacePath: "D:/development/WinTogether2/.worktrees/feature-v1-foundation",
+              status: "draft",
+              createdAt: "2026-04-14T12:00:00.000Z"
+            }
+          }
+        },
+        {
+          id: "event-2",
+          type: "agent.spawned",
+          timestamp: "2026-04-14T12:00:01.000Z",
+          payload: {
+            missionId: "mission-123",
+            agent: {
+              id: "agent-123",
+              role: "captain",
+              name: "Captain",
+              status: "planning"
+            }
+          }
+        },
+        {
+          id: "event-3",
+          type: "agent.message",
+          timestamp: "2026-04-14T12:00:02.000Z",
+          payload: {
+            missionId: "mission-123",
+            agentId: "agent-123",
+            text: "captain.planning"
+          }
+        },
+        {
+          id: "event-4",
+          type: "agent.message",
+          timestamp: "2026-04-14T12:00:03.000Z",
+          payload: {
+            missionId: "mission-123",
+            agentId: "agent-123",
+            text: "captain.summary"
+          }
+        }
+      ],
       persistence: {
         transcript: {
           status: "written"
@@ -122,7 +173,9 @@ describe("TeamRoomPage", () => {
 
     expect(getDefaultWorkspacePath).toHaveBeenCalledTimes(1);
     expect(await screen.findByText("任务“Ship the first loop”已启动。")).toBeTruthy();
+    expect(await screen.findByText("Captain 已加入当前协作室。")).toBeTruthy();
     expect(await screen.findByText("Captain 正在为这个目标规划下一步：Ship the first loop")).toBeTruthy();
+    expect(await screen.findByText("Captain 已给出第一版执行摘要，接下来会围绕“Ship the first loop”继续组织协作。")).toBeTruthy();
     expect(useAppStore.getState().activeMissionId).toBe("mission-123");
     expect(screen.getByTestId("location-path").textContent).toBe("/team/mission-123");
   });
