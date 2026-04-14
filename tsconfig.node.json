@@ -1,14 +1,24 @@
-{
-  "extends": "./tsconfig.base.json",
+﻿{
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "lib": ["ES2022"],
-    "types": ["node"]
+    "types": ["node"],
+    "target": "ES2022",
+    "strict": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noEmit": true
   },
   "include": [
     "src/main/**/*.ts",
     "src/preload/**/*.ts",
+    "src/runtime/**/*.ts",
+    "src/shared/**/*.ts",
+    "tests/**/*.ts",
     "vite.config.ts",
     "electron.vite.config.ts"
   ]

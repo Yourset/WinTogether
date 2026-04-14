@@ -1,4 +1,8 @@
-﻿export interface MissionRecord {
+﻿export interface MissionCreatedEventPayload {
+  mission: MissionRecord;
+}
+
+export interface MissionRecord {
   id: string;
   title: string;
   workspacePath: string;

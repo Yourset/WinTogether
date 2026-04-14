@@ -1,4 +1,8 @@
-﻿export type MemoryScope = "user" | "team" | "mission" | "workspace" | "knowledge" | "work-log";
+﻿export interface MemoryWrittenEventPayload {
+  memory: MemoryWriteRecord;
+}
+
+export type MemoryScope = "user" | "team" | "mission" | "workspace" | "knowledge" | "work-log";
 
 export interface MemoryWriteRecord {
   id: string;
