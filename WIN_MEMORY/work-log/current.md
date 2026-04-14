@@ -16,3 +16,4 @@
 - 2026-04-14 task 3 checkpoint: mission start now returns a structured event snapshot, EventBus keeps a readable event history, and Team Room maps mission/captain events into a more realistic collaboration timeline instead of hardcoding two local messages.
 - 2026-04-14 task 4 checkpoint: Memory Viewer now reads real `WIN_MEMORY` content through runtime/preload and displays the memory index together with the current work log instead of a placeholder page.
 - 2026-04-14 task 5 checkpoint: the testable workbench checkpoint is now documented, `start-dev.bat` tells the tester what to verify, and final verification passed with `npm run lint`, `npm test`, and `npm run build`.
+- 2026-04-14 startup script fix checkpoint: `start-dev.bat` stopped opening because a previous localized edit corrupted several `echo` lines into single broken commands. The launcher was rewritten as a clean ASCII batch file and a short smoke run no longer shows command parsing errors.

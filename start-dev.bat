@@ -5,35 +5,36 @@ title Win Together Dev
 cd /d "%~dp0"
 
 if not exist "package.json" (
-  echo [Win Together] 未找到 package.json。
-  echo [Win Together] 请从项目根目录运行这个脚本。
+  echo [Win Together] package.json not found.
+  echo [Win Together] Please run this script from the project worktree.
   pause
   exit /b 1
 )
 
 if not exist "node_modules" (
-  echo [Win Together] 未找到 node_modules，先执行 npm install...
+  echo [Win Together] node_modules not found. Running npm install...
   call npm install
   if errorlevel 1 (
-    echo [Win Together] npm install 失败。
+    echo [Win Together] npm install failed.
     pause
     exit /b 1
   )
 )
 
-echo [Win Together] 正在启动开发模式...
-echo [Win Together] 只要这个窗口保持打开，热更新就会持续生效。
+echo [Win Together] Starting dev mode...
+echo [Win Together] Keep this window open for hot reload.
 echo.
-echo [Win Together] 这一版建议重点检查：
-echo [1] 左侧最近任务、Codex CLI 状态、语言切换是否正常
-echo [2] 首页输入目标后，Team Room 时间线是否更像真实协作过程
-echo [3] 任务记录页是否能看到真实历史摘要
-echo [4] 记忆中心是否能看到 WIN_MEMORY 索引和当前工作日志
+echo [Win Together] Quick checks:
+echo [1] Sidebar shows recent missions, Codex CLI status, and language switch.
+echo [2] Home page lets you enter a goal and start a mission.
+echo [3] Mission history shows real summaries.
+echo [4] Memory viewer shows WIN_MEMORY index and current work log.
 echo.
+
 call npm run dev
 
 if errorlevel 1 (
-  echo [Win Together] 开发服务异常退出。
+  echo [Win Together] Dev server exited with an error.
   pause
   exit /b 1
 )
