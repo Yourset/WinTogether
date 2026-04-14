@@ -341,6 +341,51 @@ a {
   color: #4d627c;
 }
 
+.status-inline--pending,
+.composer-panel__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.status-inline--pending::before,
+.composer-panel__status::before {
+  content: "";
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #5f8cff, #6ddf99);
+  box-shadow: 0 0 0 0 rgba(95, 140, 255, 0.3);
+  animation: statusPulse 1.4s ease-in-out infinite;
+}
+
+.status-inline--pending {
+  border-color: rgba(95, 140, 255, 0.18);
+  background: #eef6ff;
+}
+
+.composer-panel__status {
+  margin: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(95, 140, 255, 0.16);
+  background: #eef6ff;
+  padding: 0.9rem 1rem;
+  color: #27425f;
+}
+
+@keyframes statusPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(95, 140, 255, 0.28);
+  }
+
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 0.6rem rgba(95, 140, 255, 0);
+  }
+}
+
 .surface-card--compact {
   gap: 0.8rem;
 }

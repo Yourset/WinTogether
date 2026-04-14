@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { createBrowserBridge, shouldInstallBrowserBridge } from "../../src/renderer/support/browserBridge";
 
@@ -55,5 +55,41 @@ describe("browserBridge", () => {
       indexContent: expect.stringContaining("Browser bridge"),
       workLogContent: expect.stringContaining("Build the first login flow")
     });
+  });
+
+  it("keeps smoke tests and mission starts pending when a bridge delay is configured", async () => {
+    vi.useFakeTimers();
+
+    try {
+      const bridge = createBrowserBridge({ responseDelayMs: 750 });
+
+      const smokePromise = bridge.runCodexSmokeTest?.("Say one short sentence that confirms the bridge waits.");
+      const missionPromise = bridge.startMission({
+        goal: "Build the first login flow",
+        workspacePath: "D:/development/WinTogether2"
+      });
+
+      await vi.advanceTimersByTimeAsync(750);
+
+      await expect(smokePromise).resolves.toEqual({
+        status: "success",
+        message: "Browser bridge is ready.",
+        rawOutput: "Browser bridge is ready."
+      });
+      await expect(missionPromise).resolves.toEqual(
+        expect.objectContaining({
+          mission: expect.objectContaining({
+            goal: "Build the first login flow"
+          }),
+          persistence: {
+            transcript: {
+              status: "written"
+            }
+          }
+        })
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

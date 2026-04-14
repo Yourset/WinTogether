@@ -35,6 +35,10 @@ export function MissionComposer({
   const recordMissionStarted = useAppStore((state) => state.recordMissionStarted);
   const setCurrentWorkspacePath = useAppStore((state) => state.setCurrentWorkspacePath);
   const strings = getStrings(language);
+  const waitingMessage =
+    language === "en"
+      ? "Captain is waiting for Codex CLI to answer. Please hold on..."
+      : "Captain 正在等待 Codex CLI 回应，请稍候...";
   const api = window.winTogether;
 
   useEffect(() => {
@@ -127,7 +131,7 @@ export function MissionComposer({
       : undefined;
 
   return (
-    <section aria-labelledby="team-room-composer" style={panelStyle} className="composer-panel">
+    <section aria-busy={isStartingMission} aria-labelledby="team-room-composer" style={panelStyle} className="composer-panel">
       {hideTitle ? null : <h2 id="team-room-composer">{strings.composerTitle}</h2>}
       <div className="composer-panel__field">
         <label htmlFor={workspaceInputId}>{strings.workspaceLabel}</label>
@@ -162,6 +166,11 @@ export function MissionComposer({
       {errorMessage ? (
         <p role="alert" className="alert-error">
           {errorMessage}
+        </p>
+      ) : null}
+      {isStartingMission ? (
+        <p role="status" aria-live="polite" className="composer-panel__status composer-panel__status--pending">
+          {waitingMessage}
         </p>
       ) : null}
       <div className="composer-panel__actions">

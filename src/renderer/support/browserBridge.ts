@@ -17,6 +17,7 @@ type BrowserBridgeTarget = Window & {
 
 export interface BrowserBridgeOptions {
   defaultWorkspacePath?: string;
+  responseDelayMs?: number;
 }
 
 export interface BrowserBridgeActivationInput {
@@ -30,6 +31,24 @@ function nowIso() {
 
 function makeId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+}
+
+function parseDelayMs(search: string | undefined) {
+  const params = new URLSearchParams(search ?? "");
+  const rawDelay = params.get("bridge-delay-ms") ?? params.get("bridge-delay");
+  const parsedDelay = Number.parseInt(rawDelay ?? "", 10);
+
+  return Number.isFinite(parsedDelay) && parsedDelay > 0 ? parsedDelay : 0;
+}
+
+function wait(ms: number) {
+  if (ms <= 0) {
+    return Promise.resolve();
+  }
+
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 function createMission(goal: string, workspacePath: string): MissionRecord {
@@ -147,6 +166,7 @@ export function shouldInstallBrowserBridge(input: BrowserBridgeActivationInput) 
 export function createBrowserBridge(options: BrowserBridgeOptions = {}): WinTogetherApi {
   const defaultWorkspacePath =
     options.defaultWorkspacePath ?? "D:/development/WinTogether2/.worktrees/feature-v1-foundation";
+  const responseDelayMs = options.responseDelayMs ?? 0;
   const recentMissions: RecentMissionRecord[] = [];
   const memoryIndexContent = [
     "# Browser bridge",
@@ -176,11 +196,15 @@ export function createBrowserBridge(options: BrowserBridgeOptions = {}): WinToge
     }),
     getRecentMissions: async () => [...recentMissions],
     getRuntimeStatus: async () => runtimeStatus,
-    runCodexSmokeTest: async (_prompt?: string): Promise<CodexSmokeTestResult> => ({
-      status: "success",
-      message: "Browser bridge is ready.",
-      rawOutput: "Browser bridge is ready."
-    }),
+    runCodexSmokeTest: async (_prompt?: string): Promise<CodexSmokeTestResult> => {
+      await wait(responseDelayMs);
+
+      return {
+        status: "success",
+        message: "Browser bridge is ready.",
+        rawOutput: "Browser bridge is ready."
+      };
+    },
     startMission: async (input: StartMissionInput): Promise<StartMissionResult> => {
       const goal = input.goal.trim();
       const workspacePath = input.workspacePath?.trim() || defaultWorkspacePath;
@@ -202,6 +226,8 @@ export function createBrowserBridge(options: BrowserBridgeOptions = {}): WinToge
         summary,
         lastUpdatedAt: nowIso()
       };
+
+      await wait(responseDelayMs);
 
       recentMissions.unshift(updatedMission);
       workLogContent = [
@@ -243,7 +269,9 @@ export function installBrowserBridge(targetWindow?: BrowserBridgeTarget) {
     return resolvedWindow.winTogether;
   }
 
-  const bridge = createBrowserBridge();
+  const bridge = createBrowserBridge({
+    responseDelayMs: parseDelayMs((resolvedWindow as { location?: { search?: string } }).location?.search)
+  });
   Object.defineProperty(resolvedWindow, "winTogether", {
     configurable: true,
     enumerable: true,

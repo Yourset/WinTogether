@@ -57,7 +57,11 @@ export function HomePage() {
           </p>
         </div>
 
-        <div className="status-inline">
+        <div
+          className={`status-inline ${isCodexSmokeTestRunning ? "status-inline--pending" : ""}`}
+          role="status"
+          aria-live="polite"
+        >
           {isCodexSmokeTestRunning
             ? strings.homeSmokeTestRunning
             : codexSmokeTestResult

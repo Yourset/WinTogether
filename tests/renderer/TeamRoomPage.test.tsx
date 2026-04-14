@@ -385,4 +385,99 @@ describe("TeamRoomPage", () => {
     expect(screen.getAllByRole("heading").length).toBeGreaterThan(0);
     expect(await screen.findByRole("alert")).toBeTruthy();
   });
+
+  it("shows a visible waiting state while the mission is still starting", async () => {
+    useAppStore.setState({
+      activeMissionId: null,
+      timelineItems: [],
+      language: "en",
+      recentMissions: [],
+      runtimeStatus: null,
+      codexSmokeTestResult: null,
+      isCodexSmokeTestRunning: false
+    });
+    const deferredStartMission = createDeferredPromise<{
+      mission: {
+        id: string;
+        title: string;
+        goal: string;
+        workspacePath: string;
+        status: string;
+        createdAt: string;
+      };
+      captain: {
+        id: string;
+        role: string;
+        name: string;
+        status: string;
+      };
+      persistence: {
+        transcript: {
+          status: "written";
+        };
+      };
+    }>();
+    const getDefaultWorkspacePath = vi.fn().mockResolvedValue("D:/development/WinTogether2/.worktrees/feature-v1-foundation");
+    const startMission = vi.fn().mockReturnValue(deferredStartMission.promise);
+
+    Object.defineProperty(window, "winTogether", {
+      configurable: true,
+      value: {
+        getDefaultWorkspacePath,
+        runCodexSmokeTest: vi.fn(),
+        startMission
+      }
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/team/draft"]}>
+        <LocationProbe />
+        <Routes>
+          <Route path="/team/:missionId" element={<TeamRoomPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      expect((screen.getByLabelText("Workspace path") as HTMLInputElement).value).toBe(
+        "D:/development/WinTogether2/.worktrees/feature-v1-foundation"
+      );
+    });
+
+    fireEvent.change(screen.getByPlaceholderText("Tell Captain the goal..."), {
+      target: { value: "Build the first login flow" }
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Start Mission" }));
+
+    expect((screen.getByRole("button", { name: "Start Mission" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("status") as HTMLElement).textContent).toContain(
+      "Captain is waiting for Codex CLI to answer"
+    );
+
+    deferredStartMission.resolve({
+      mission: {
+        id: "mission-123",
+        title: "Build the first login flow",
+        goal: "Build the first login flow",
+        workspacePath: "D:/development/WinTogether2/.worktrees/feature-v1-foundation",
+        status: "draft",
+        createdAt: "2026-04-14T12:00:00.000Z"
+      },
+      captain: {
+        id: "agent-123",
+        role: "captain",
+        name: "Captain",
+        status: "planning"
+      },
+      persistence: {
+        transcript: {
+          status: "written"
+        }
+      }
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("location-path").textContent).toBe("/team/mission-123");
+    });
+  });
 });
