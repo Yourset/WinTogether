@@ -48,6 +48,9 @@ export type AppStrings = {
   historyOpenRoom: string;
   memoryTitle: string;
   memoryIntro: string;
+  memoryIndexSection: string;
+  memoryWorkLogSection: string;
+  memoryLoading: string;
   missionStarted: (goal: string) => string;
   captainJoined: (name: string) => string;
   captainPlanning: (goal: string) => string;
@@ -102,6 +105,9 @@ const zhCN: AppStrings = {
   historyOpenRoom: "进入协作室",
   memoryTitle: "记忆中心",
   memoryIntro: "这里会展示项目记忆、团队记忆和关键上下文沉淀。",
+  memoryIndexSection: "记忆索引",
+  memoryWorkLogSection: "当前工作日志",
+  memoryLoading: "正在读取记忆内容...",
   missionStarted: (goal) => `任务“${goal}”已启动。`,
   captainJoined: (name) => `${name} 已加入当前协作室。`,
   captainPlanning: (goal) => `Captain 正在为这个目标规划下一步：${goal}`,
@@ -156,6 +162,9 @@ const en: AppStrings = {
   historyOpenRoom: "Open room",
   memoryTitle: "Memory Center",
   memoryIntro: "Inspect project memory, team memory, and saved context here.",
+  memoryIndexSection: "Memory Index",
+  memoryWorkLogSection: "Current Work Log",
+  memoryLoading: "Loading memory content...",
   missionStarted: (goal) => `Mission "${goal}" started.`,
   captainJoined: (name) => `${name} joined the current room.`,
   captainPlanning: (goal) => `Captain is planning the next steps for: ${goal}`,

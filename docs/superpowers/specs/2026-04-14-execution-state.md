@@ -42,3 +42,5 @@ Execute `docs/superpowers/plans/2026-04-14-v1-next-phase-delivery.md` through Ta
 - 2026-04-14: Task 1 completed. Recent missions now come from persisted transcript data, the history page shows stored summaries, and the full test suite is green.
 - 2026-04-14: Task 2 completed. Codex CLI health is checked through `codex --version`, exposed through runtime/preload, and rendered as a visible sidebar status.
 - 2026-04-14: Task 3 completed. Team Room now consumes a structured runtime event snapshot so the timeline reads like mission start + captain planning + captain summary instead of a fixed local stub.
+- 2026-04-14: Task 4 completed. Memory Viewer now shows real `WIN_MEMORY` data, starting with the memory index and current work log through a read-only runtime bridge.
+- 2026-04-14: Task 5 completed. Tester-facing checkpoint docs and launcher guidance were updated, and final verification passed with lint, tests, and production build.

@@ -33,6 +33,11 @@ export interface RuntimeStatus {
   };
 }
 
+export interface MemoryOverview {
+  indexContent: string;
+  workLogContent: string;
+}
+
 export interface TimelineItem {
   id: string;
   actor: string;
@@ -42,6 +47,7 @@ export interface TimelineItem {
 
 export interface WinTogetherApi {
   getDefaultWorkspacePath(): Promise<string>;
+  getMemoryOverview?(): Promise<MemoryOverview>;
   getRecentMissions?(): Promise<RecentMissionRecord[]>;
   getRuntimeStatus?(): Promise<RuntimeStatus>;
   startMission(input: StartMissionInput): Promise<StartMissionResult>;

@@ -1,13 +1,20 @@
 import { CodexCliAdapter } from "../adapters/CodexCliAdapter";
 import type { AppEvent } from "../../shared/contracts/events";
 import { EventBus } from "./EventBus";
+import { MemoryManager } from "./MemoryManager";
 import { MissionOrchestrator, type StartMissionInput, type StartMissionResult } from "./MissionOrchestrator";
 import { TranscriptStore, type RecentMissionRecord } from "./TranscriptStore";
 import { WorkspaceManager } from "./WorkspaceManager";
-import type { AppRuntime, AppRuntimeMissionStartResult, AppRuntimeStatus } from "./AppRuntime";
+import type {
+  AppMemoryOverview,
+  AppRuntime,
+  AppRuntimeMissionStartResult,
+  AppRuntimeStatus
+} from "./AppRuntime";
 
 interface AppRuntimeDependencies {
   codexCliAdapter: CodexCliAdapter;
+  memoryManager: MemoryManager;
   missionOrchestrator: MissionOrchestrator;
   workspaceManager: WorkspaceManager;
   transcriptStore: TranscriptStore;
@@ -15,12 +22,14 @@ interface AppRuntimeDependencies {
 
 export class AppRuntimeImpl implements AppRuntime {
   readonly codexCliAdapter: CodexCliAdapter;
+  readonly memoryManager: MemoryManager;
   readonly missionOrchestrator: MissionOrchestrator;
   readonly workspaceManager: WorkspaceManager;
   readonly transcriptStore: TranscriptStore;
 
   constructor(rootPath: string, dependencies: Partial<AppRuntimeDependencies> = {}) {
     this.codexCliAdapter = dependencies.codexCliAdapter ?? new CodexCliAdapter();
+    this.memoryManager = dependencies.memoryManager ?? new MemoryManager(rootPath);
     this.workspaceManager = dependencies.workspaceManager ?? new WorkspaceManager(rootPath);
     this.transcriptStore = dependencies.transcriptStore ?? new TranscriptStore(rootPath);
     this.missionOrchestrator =
@@ -59,6 +68,10 @@ export class AppRuntimeImpl implements AppRuntime {
     return {
       codexCli: await this.codexCliAdapter.checkHealth(this.workspaceManager.getRootPath())
     };
+  }
+
+  async getMemoryOverview(): Promise<AppMemoryOverview> {
+    return this.memoryManager.readOverview();
   }
 
   private async persistMissionStart(result: StartMissionResult) {

@@ -1,9 +1,14 @@
-import type { AppRuntimeMissionStartResult, AppRuntimeStatus } from "../../../runtime/core/AppRuntime";
+import type {
+  AppMemoryOverview,
+  AppRuntimeMissionStartResult,
+  AppRuntimeStatus
+} from "../../../runtime/core/AppRuntime";
 import type { RecentMissionRecord } from "../../../runtime/core/TranscriptStore";
 
 export const runtimeStartMissionChannel = "runtime:start-mission";
 export const runtimeGetRecentMissionsChannel = "runtime:get-recent-missions";
 export const runtimeGetStatusChannel = "runtime:get-status";
+export const runtimeGetMemoryOverviewChannel = "runtime:get-memory-overview";
 
 export interface RuntimeStartMissionRequest {
   goal: string;
@@ -29,9 +34,14 @@ export interface RuntimeStatusReader {
   getRuntimeStatus(): Promise<AppRuntimeStatus>;
 }
 
+export interface RuntimeMemoryReader {
+  getMemoryOverview(): Promise<AppMemoryOverview>;
+}
+
 export function registerRuntimeChannels(
   ipcMain: RuntimeChannelRegistrar,
-  runtimeService: RuntimeMissionStarter & Partial<RuntimeRecentMissionsReader & RuntimeStatusReader>
+  runtimeService: RuntimeMissionStarter &
+    Partial<RuntimeRecentMissionsReader & RuntimeStatusReader & RuntimeMemoryReader>
 ) {
   ipcMain.handle(runtimeStartMissionChannel, (_event, input) => {
     if (!input) {
@@ -49,5 +59,11 @@ export function registerRuntimeChannels(
 
   if (runtimeService.getRuntimeStatus) {
     ipcMain.handle(runtimeGetStatusChannel, () => Promise.resolve(runtimeService.getRuntimeStatus?.()));
+  }
+
+  if (runtimeService.getMemoryOverview) {
+    ipcMain.handle(runtimeGetMemoryOverviewChannel, () =>
+      Promise.resolve(runtimeService.getMemoryOverview?.())
+    );
   }
 }

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import {
   registerRuntimeChannels,
+  runtimeGetMemoryOverviewChannel,
   runtimeGetStatusChannel,
   runtimeGetRecentMissionsChannel,
   runtimeStartMissionChannel
@@ -96,5 +97,30 @@ describe("registerRuntimeChannels", () => {
       }
     });
     expect(getRuntimeStatus).toHaveBeenCalledTimes(1);
+  });
+
+  it("registers the runtime:get-memory-overview handler when the runtime service supports it", async () => {
+    const handle = vi.fn();
+    const getMemoryOverview = vi.fn().mockResolvedValue({
+      indexContent: "# Memory Index",
+      workLogContent: "# Current Work Log"
+    });
+
+    registerRuntimeChannels(
+      { handle },
+      {
+        startMission: vi.fn(),
+        getMemoryOverview
+      }
+    );
+
+    expect(handle).toHaveBeenCalledWith(runtimeGetMemoryOverviewChannel, expect.any(Function));
+
+    const handler = handle.mock.calls[1]?.[1] as (() => Promise<unknown>) | undefined;
+    await expect(handler?.()).resolves.toEqual({
+      indexContent: "# Memory Index",
+      workLogContent: "# Current Work Log"
+    });
+    expect(getMemoryOverview).toHaveBeenCalledTimes(1);
   });
 });

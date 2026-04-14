@@ -7,6 +7,7 @@ import type { RecentMissionRecord } from "./TranscriptStore";
 
 export interface AppRuntime {
   startMission(input: StartMissionInput): Promise<AppRuntimeMissionStartResult>;
+  getMemoryOverview?(): Promise<AppMemoryOverview>;
   getRecentMissions?(): Promise<RecentMissionRecord[]>;
   getRuntimeStatus?(): Promise<AppRuntimeStatus>;
 }
@@ -18,6 +19,11 @@ export type AppRecentMission = RecentMissionRecord;
 
 export interface AppRuntimeStatus {
   codexCli: CodexCliHealth;
+}
+
+export interface AppMemoryOverview {
+  indexContent: string;
+  workLogContent: string;
 }
 
 export interface RuntimePersistenceStatus {

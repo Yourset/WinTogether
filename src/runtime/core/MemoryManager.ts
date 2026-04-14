@@ -46,6 +46,15 @@ export class MemoryManager {
     await appendFile(workLogPath, `${entry}\n`, UTF8);
   }
 
+  async readOverview() {
+    await this.ensureBaseStructure();
+
+    return {
+      indexContent: await readFile(join(this.getMemoryRoot(), "INDEX.md"), UTF8),
+      workLogContent: await readFile(join(this.getMemoryRoot(), "work-log", "current.md"), UTF8)
+    };
+  }
+
   private async writeIfMissing(filePath: string, content: string) {
     try {
       await access(filePath);

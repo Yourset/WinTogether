@@ -1,5 +1,10 @@
 import { MemoryManager } from "../../../runtime/core/MemoryManager";
-import type { AppRuntime, AppRuntimeMissionStartResult, AppRuntimeStatus } from "../../../runtime/core/AppRuntime";
+import type {
+  AppMemoryOverview,
+  AppRuntime,
+  AppRuntimeMissionStartResult,
+  AppRuntimeStatus
+} from "../../../runtime/core/AppRuntime";
 import type { RecentMissionRecord } from "../../../runtime/core/TranscriptStore";
 import type { RuntimeStartMissionRequest } from "../../ipc/channels/runtimeChannels";
 import type { WorkspacePickerService } from "../workspace/WorkspacePickerService";
@@ -50,5 +55,9 @@ export class AppRuntimeService {
         }
       }
     );
+  }
+
+  async getMemoryOverview(): Promise<AppMemoryOverview> {
+    return this.memoryManager.readOverview();
   }
 }

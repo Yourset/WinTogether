@@ -8,6 +8,14 @@
 
 **Tech Stack:** Electron, React, TypeScript, Zustand, React Router, Node.js, Vitest, Testing Library
 
+## Progress Checkpoint
+
+- Completed: Task 1 `recent missions + history persistence`
+- Completed: Task 2 `visible Codex CLI health status`
+- Completed: Task 3 `richer Team Room event timeline`
+- Completed: Task 4 `real Memory Viewer content`
+- In progress: Task 5 `tester-facing polish, notes, and smoke verification`
+
 ---
 
 ## 文件结构
