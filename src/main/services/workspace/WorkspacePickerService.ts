@@ -1,18 +1,18 @@
 import path from "node:path";
 
 export class WorkspacePickerService {
-  constructor(private readonly defaultWorkspacePath: string = process.cwd()) {}
+  constructor(private readonly fallbackWorkspacePath: string) {}
 
   getDefaultWorkspacePath() {
-    return this.defaultWorkspacePath;
+    return this.fallbackWorkspacePath;
   }
 
   resolveWorkspacePath(workspacePath?: string) {
     const candidate = workspacePath?.trim();
     if (!candidate) {
-      return this.defaultWorkspacePath;
+      return this.fallbackWorkspacePath;
     }
 
-    return path.resolve(this.defaultWorkspacePath, candidate);
+    return path.resolve(this.fallbackWorkspacePath, candidate);
   }
 }

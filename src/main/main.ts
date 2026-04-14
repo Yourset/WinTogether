@@ -7,7 +7,17 @@ import { AppRuntimeService } from "./services/runtime/AppRuntimeService";
 import { createAppRuntime } from "./services/runtime/createAppRuntime";
 import { WorkspacePickerService } from "./services/workspace/WorkspacePickerService";
 
-const rootPath = process.cwd();
+function resolveDefaultWorkspacePath() {
+  const configuredWorkspacePath = process.env.WIN_TOGETHER_DEFAULT_WORKSPACE?.trim();
+
+  if (configuredWorkspacePath) {
+    return path.resolve(configuredWorkspacePath);
+  }
+
+  return process.cwd();
+}
+
+const rootPath = resolveDefaultWorkspacePath();
 const workspacePickerService = new WorkspacePickerService(rootPath);
 const runtimeService = new AppRuntimeService({
   rootPath,
