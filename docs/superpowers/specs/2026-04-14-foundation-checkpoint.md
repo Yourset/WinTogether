@@ -76,4 +76,13 @@ From 2026-04-15 onward, this branch should be advanced using a stricter delivery
 - close stale app/test windows before each automated or manual run
 - keep `WIN_MEMORY` and checkpoint files updated so the branch can survive context compression
 
+## 7. Browser-First Infrastructure
+
+The current tester-facing browser baseline now includes:
+
+- a Vite browser mode at `npm run dev:web`
+- a renderer-side browser bridge that installs automatically when Electron preload is absent
+- a Playwright e2e path that covers the first-user mission start journey and the Codex CLI smoke-test entry point
+- a Vitest exclusion rule so Playwright specs under `tests/e2e` do not get double-collected as unit tests
+
 This document should be updated whenever Win Together reaches another tester-facing milestone.

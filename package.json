@@ -6,10 +6,13 @@
   "main": "out/main/main.js",
   "scripts": {
     "dev": "electron-vite dev",
+    "dev:web": "vite --host 127.0.0.1 --port 5173 --strictPort",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
     "lint": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.app.json"
   },
   "dependencies": {
@@ -21,6 +24,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^16.0.0",
+    "@playwright/test": "^1.53.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
