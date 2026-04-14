@@ -1,10 +1,10 @@
 import { access, appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const UTF8 = "utf8";
 
-const TEMPLATE_ROOT = fileURLToPath(new URL("../../../WIN_MEMORY/", import.meta.url));
+const MODULE_URL = import.meta.url;
 
 const TEMPLATE_FILES = [
   "README.md",
@@ -29,19 +29,20 @@ export class MemoryManager {
 
   async ensureBaseStructure() {
     await mkdir(this.getMemoryRoot(), { recursive: true });
+    const templateRoot = await resolveTemplateRoot(MODULE_URL);
 
     for (const relativePath of TEMPLATE_FILES) {
       const targetPath = join(this.getMemoryRoot(), relativePath);
       await mkdir(join(this.getMemoryRoot(), dirname(relativePath)), { recursive: true });
-      await this.writeIfMissing(targetPath, await this.readTemplate(relativePath));
+      await this.writeIfMissing(targetPath, await this.readTemplate(templateRoot, relativePath));
     }
   }
 
   async appendWorkLog(line: string) {
+    const entry = this.formatWorkLogEntry(line);
     await this.ensureBaseStructure();
 
     const workLogPath = join(this.getMemoryRoot(), "work-log", "current.md");
-    const entry = this.formatWorkLogEntry(line);
     await appendFile(workLogPath, `${entry}\n`, UTF8);
   }
 
@@ -53,8 +54,8 @@ export class MemoryManager {
     }
   }
 
-  private async readTemplate(relativePath: string) {
-    return readFile(join(TEMPLATE_ROOT, relativePath), UTF8);
+  private async readTemplate(templateRoot: string, relativePath: string) {
+    return readFile(join(templateRoot, relativePath), UTF8);
   }
 
   private formatWorkLogEntry(line: string) {
@@ -63,10 +64,32 @@ export class MemoryManager {
       throw new Error("Work log entries must not be empty");
     }
 
+    if (/\r|\n/.test(normalized)) {
+      throw new Error("Work log entries must be a single line");
+    }
+
     return `- ${normalized}`;
   }
 
   private getMemoryRoot() {
     return join(this.rootPath, "WIN_MEMORY");
   }
+}
+
+export async function resolveTemplateRoot(moduleUrl: string = MODULE_URL) {
+  const candidateRoots = [
+    fileURLToPath(new URL("../../../WIN_MEMORY/", moduleUrl)),
+    fileURLToPath(new URL("../../WIN_MEMORY/", moduleUrl))
+  ];
+
+  for (const candidateRoot of candidateRoots) {
+    try {
+      await access(join(candidateRoot, "INDEX.md"));
+      return resolve(candidateRoot);
+    } catch {
+      // Try the next layout.
+    }
+  }
+
+  throw new Error(`Unable to locate WIN_MEMORY templates from ${moduleUrl}`);
 }
