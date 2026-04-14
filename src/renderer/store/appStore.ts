@@ -40,9 +40,12 @@ declare global {
 type AppState = {
   activeMissionId: string | null;
   timelineItems: TimelineItem[];
+  recentMissions: MissionRecord[];
+  currentWorkspacePath: string | null;
   language: AppLanguage;
   setLanguage: (language: AppLanguage) => void;
   setActiveMissionId: (missionId: string | null) => void;
+  setCurrentWorkspacePath: (workspacePath: string | null) => void;
   recordMissionStarted: (result: StartMissionResult) => void;
 };
 
@@ -53,18 +56,27 @@ function formatTimelineTime(timestamp: string) {
   });
 }
 
+function mergeRecentMissions(previous: MissionRecord[], mission: MissionRecord) {
+  return [mission, ...previous.filter((item) => item.id !== mission.id)].slice(0, 8);
+}
+
 export const useAppStore = create<AppState>()((set) => ({
   activeMissionId: null,
   timelineItems: [],
+  recentMissions: [],
+  currentWorkspacePath: null,
   language: "zh-CN",
   setLanguage: (language) => set({ language }),
   setActiveMissionId: (missionId) => set({ activeMissionId: missionId }),
+  setCurrentWorkspacePath: (workspacePath) => set({ currentWorkspacePath: workspacePath?.trim() ? workspacePath.trim() : null }),
   recordMissionStarted: (result) =>
     set((state) => {
       const strings = getStrings(state.language);
 
       return {
         activeMissionId: result.mission.id,
+        currentWorkspacePath: result.mission.workspacePath,
+        recentMissions: mergeRecentMissions(state.recentMissions, result.mission),
         timelineItems: [
           ...state.timelineItems,
           {

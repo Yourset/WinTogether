@@ -7,11 +7,15 @@ export type AppStrings = {
   navHistory: string;
   navMemory: string;
   navTeamRoomHint: string;
+  sidebarRecentMissions: string;
+  sidebarNoRecentMissions: string;
+  sidebarWorkspace: string;
+  sidebarWorkspaceEmpty: string;
+  sidebarLanguage: string;
+  homeTitle: string;
   homeIntro: string;
-  homeStartNew: string;
-  homeEnterRoom: string;
-  homeResumeLast: string;
   homeHint: string;
+  homeSubmit: string;
   teamRoomTitle: string;
   missionIdLabel: string;
   missionIdUnassigned: string;
@@ -32,22 +36,30 @@ export type AppStrings = {
   send: string;
   startMissionFallbackError: string;
   systemActor: string;
+  historyTitle: string;
+  historyIntro: string;
+  memoryTitle: string;
+  memoryIntro: string;
   missionStarted: (goal: string) => string;
   captainPlanning: (goal: string) => string;
 };
 
 const zhCN: AppStrings = {
   shellTagline: "任务指挥台",
-  navHome: "首页",
-  navTeamRoom: "团队协作室",
+  navHome: "新建任务",
+  navTeamRoom: "当前协作室",
   navHistory: "任务记录",
   navMemory: "记忆中心",
-  navTeamRoomHint: "先开始一个任务，再进入团队协作室",
-  homeIntro: "把你的目标交给 AI 团队，然后在同一个房间里观察、纠偏和继续推进。",
-  homeStartNew: "开始一个新任务",
-  homeEnterRoom: "进入 Team Room",
-  homeResumeLast: "继续上一次任务",
-  homeHint: "建议先点击“开始一个新任务”，系统会带你进入当前任务房间。",
+  navTeamRoomHint: "先创建一个任务，才能进入当前协作室",
+  sidebarRecentMissions: "最近任务",
+  sidebarNoRecentMissions: "还没有最近任务，先创建一个新的目标吧。",
+  sidebarWorkspace: "当前工作区",
+  sidebarWorkspaceEmpty: "尚未选择工作区",
+  sidebarLanguage: "界面语言",
+  homeTitle: "把目标交给 Captain",
+  homeIntro: "描述你现在想推进的任务，Captain 会先接需求、拆计划，然后在合适的时候拉起需要的专业 Agent。",
+  homeHint: "建议直接写一句清楚的目标，例如“先做登录流程并给我一个可运行的第一版”。",
+  homeSubmit: "开始协作",
   teamRoomTitle: "团队协作室",
   missionIdLabel: "任务 ID",
   missionIdUnassigned: "未分配",
@@ -56,7 +68,7 @@ const zhCN: AppStrings = {
   contextTitle: "当前上下文",
   contextMission: "任务",
   contextFocus: "焦点",
-  contextFocusValue: "先对齐下一步任务目标。",
+  contextFocusValue: "先对齐当前目标，再继续推进执行。",
   composerTitle: "任务输入区",
   workspaceLabel: "工作区路径",
   workspacePlaceholder: "输入要协作的项目路径",
@@ -68,22 +80,30 @@ const zhCN: AppStrings = {
   send: "开始执行",
   startMissionFallbackError: "任务启动失败，请检查工作区路径后重试。",
   systemActor: "系统",
+  historyTitle: "任务记录",
+  historyIntro: "这里会展示过去的任务、阶段总结和结果回顾。",
+  memoryTitle: "记忆中心",
+  memoryIntro: "这里会展示项目记忆、团队记忆和关键上下文沉淀。",
   missionStarted: (goal) => `任务“${goal}”已启动。`,
   captainPlanning: (goal) => `Captain 正在为这个目标规划下一步：${goal}`
 };
 
 const en: AppStrings = {
   shellTagline: "Mission control",
-  navHome: "Home",
-  navTeamRoom: "Team Room",
-  navHistory: "History",
-  navMemory: "Memory",
-  navTeamRoomHint: "Start a mission first to open the team room",
-  homeIntro: "Hand a goal to your AI team, then observe, steer, and continue the work from one shared room.",
-  homeStartNew: "Start a new mission",
-  homeEnterRoom: "Enter the Team Room",
-  homeResumeLast: "Resume the last mission",
-  homeHint: "Start with a new mission to enter the active team room.",
+  navHome: "New Mission",
+  navTeamRoom: "Current Room",
+  navHistory: "Mission History",
+  navMemory: "Memory Center",
+  navTeamRoomHint: "Create a mission first to open the current room",
+  sidebarRecentMissions: "Recent Missions",
+  sidebarNoRecentMissions: "No recent missions yet. Start with a new goal.",
+  sidebarWorkspace: "Current Workspace",
+  sidebarWorkspaceEmpty: "No workspace selected yet",
+  sidebarLanguage: "Language",
+  homeTitle: "Hand the goal to Captain",
+  homeIntro: "Describe what you want to move forward. Captain will take the request, break the plan down, and assemble the right specialist agents when needed.",
+  homeHint: 'Try a direct goal such as "Build the first login flow and give me a runnable first pass."',
+  homeSubmit: "Start Collaboration",
   teamRoomTitle: "Team Room",
   missionIdLabel: "Mission ID",
   missionIdUnassigned: "Unassigned",
@@ -92,7 +112,7 @@ const en: AppStrings = {
   contextTitle: "Context",
   contextMission: "Mission",
   contextFocus: "Focus",
-  contextFocusValue: "Align on the next mission step.",
+  contextFocusValue: "Align on the current goal before continuing execution.",
   composerTitle: "Mission Composer",
   workspaceLabel: "Workspace path",
   workspacePlaceholder: "Enter the workspace path",
@@ -101,9 +121,13 @@ const en: AppStrings = {
   workspaceManual: "Using a workspace path you entered for this mission.",
   workspaceMissing: "No default workspace is available. Enter a workspace path before starting the mission.",
   goalPlaceholder: "Tell Captain the goal...",
-  send: "Send",
+  send: "Start Mission",
   startMissionFallbackError: "Mission start failed. Check the workspace path and try again.",
   systemActor: "System",
+  historyTitle: "Mission History",
+  historyIntro: "Review past missions, stage summaries, and outcomes here.",
+  memoryTitle: "Memory Center",
+  memoryIntro: "Inspect project memory, team memory, and saved context here.",
   missionStarted: (goal) => `Mission "${goal}" started.`,
   captainPlanning: (goal) => `Captain is planning the next steps for: ${goal}`
 };
