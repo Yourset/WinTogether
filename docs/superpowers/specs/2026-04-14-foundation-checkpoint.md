@@ -66,4 +66,14 @@ This checkpoint preserves a stronger baseline than the earlier workbench-only mi
 - runtime data is visible in multiple pages
 - memory is no longer hidden behind placeholder copy
 
+## 6. Active Execution Workflow
+
+From 2026-04-15 onward, this branch should be advanced using a stricter delivery loop:
+
+- use subagents for bounded implementation and verification tasks whenever practical
+- treat Playwright as the standard UX regression layer after feature passes
+- allow longer waits and screenshot evidence for AI/CLI-driven flows
+- close stale app/test windows before each automated or manual run
+- keep `WIN_MEMORY` and checkpoint files updated so the branch can survive context compression
+
 This document should be updated whenever Win Together reaches another tester-facing milestone.
