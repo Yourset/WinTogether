@@ -35,6 +35,7 @@ export type AppStrings = {
   goalPlaceholder: string;
   send: string;
   startMissionFallbackError: string;
+  bridgeUnavailable: string;
   systemActor: string;
   historyTitle: string;
   historyIntro: string;
@@ -79,6 +80,7 @@ const zhCN: AppStrings = {
   goalPlaceholder: "告诉 Captain 你的目标...",
   send: "开始执行",
   startMissionFallbackError: "任务启动失败，请检查工作区路径后重试。",
+  bridgeUnavailable: "应用运行桥接没有成功加载，请关闭后重新启动 Win Together。",
   systemActor: "系统",
   historyTitle: "任务记录",
   historyIntro: "这里会展示过去的任务、阶段总结和结果回顾。",
@@ -123,6 +125,7 @@ const en: AppStrings = {
   goalPlaceholder: "Tell Captain the goal...",
   send: "Start Mission",
   startMissionFallbackError: "Mission start failed. Check the workspace path and try again.",
+  bridgeUnavailable: "The Win Together bridge failed to load. Please restart the app.",
   systemActor: "System",
   historyTitle: "Mission History",
   historyIntro: "Review past missions, stage summaries, and outcomes here.",

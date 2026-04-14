@@ -257,4 +257,23 @@ describe("TeamRoomPage", () => {
     expect(screen.getByTestId("location-path").textContent).toBe("/team/draft");
     expect(useAppStore.getState().activeMissionId).toBe("draft");
   });
+
+  it("shows a visible bridge error instead of crashing when the preload API is unavailable", async () => {
+    useAppStore.setState({ activeMissionId: null, timelineItems: [], language: "zh-CN" });
+    Object.defineProperty(window, "winTogether", {
+      configurable: true,
+      value: undefined
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/team/draft"]}>
+        <Routes>
+          <Route path="/team/:missionId" element={<TeamRoomPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getAllByRole("heading").length).toBeGreaterThan(0);
+    expect(await screen.findByRole("alert")).toBeTruthy();
+  });
 });

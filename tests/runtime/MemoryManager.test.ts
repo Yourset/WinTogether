@@ -26,6 +26,7 @@ describe("MemoryManager", () => {
       "- 2026-04-14 testing checkpoint: added a one-click Windows dev launcher `start-dev.bat` so the app can be opened for manual testing without typing commands, while keeping hot reload enabled.",
       "- 2026-04-14 user feedback checkpoint: first manual review says the UI is too English-heavy and the entry flow is unclear. Next product priority is `default Chinese + optional English switch` and a stronger guided home entry that makes the first click obvious.",
       "- 2026-04-14 localization checkpoint: the shell now defaults to Chinese, supports an English toggle, and the home page uses stronger guided entry actions so first-time testers can clearly start or resume a mission.",
+      "- 2026-04-14 workbench UI checkpoint: the shell now uses a left sidebar plus right content layout, the default page is a direct mission input screen instead of link-only entry points, and the sidebar reflects current workspace plus recent missions for faster retesting.",
       "- task 3 started"
     ]);
   });

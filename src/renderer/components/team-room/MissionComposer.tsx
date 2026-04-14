@@ -35,11 +35,22 @@ export function MissionComposer({
   const recordMissionStarted = useAppStore((state) => state.recordMissionStarted);
   const setCurrentWorkspacePath = useAppStore((state) => state.setCurrentWorkspacePath);
   const strings = getStrings(language);
+  const api = window.winTogether;
 
   useEffect(() => {
     let isMounted = true;
 
-    void window.winTogether
+    if (!api?.getDefaultWorkspacePath || !api?.startMission) {
+      setWorkspacePath("");
+      setWorkspaceSource("missing");
+      setCurrentWorkspacePath(null);
+      setErrorMessage(strings.bridgeUnavailable);
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    void api
       .getDefaultWorkspacePath()
       .then((defaultWorkspacePath) => {
         if (!isMounted || hasManualWorkspaceEdit.current) {
@@ -65,11 +76,16 @@ export function MissionComposer({
     return () => {
       isMounted = false;
     };
-  }, [setCurrentWorkspacePath, strings.startMissionFallbackError]);
+  }, [api, setCurrentWorkspacePath, strings.bridgeUnavailable, strings.startMissionFallbackError]);
 
   const handleSubmit = async () => {
     const nextGoal = goal.trim();
     const nextWorkspacePath = workspacePath.trim();
+
+    if (!api?.startMission) {
+      setErrorMessage(strings.bridgeUnavailable);
+      return;
+    }
 
     if (!nextGoal || !nextWorkspacePath || isStartingMission) {
       return;
@@ -79,7 +95,7 @@ export function MissionComposer({
     setErrorMessage(null);
 
     try {
-      const result = await window.winTogether.startMission({
+      const result = await api.startMission({
         goal: nextGoal,
         workspacePath: nextWorkspacePath
       });

@@ -6,6 +6,7 @@ import { registerAppIpc } from "./ipc/registerAppIpc";
 import { AppRuntimeService } from "./services/runtime/AppRuntimeService";
 import { createAppRuntime } from "./services/runtime/createAppRuntime";
 import { WorkspacePickerService } from "./services/workspace/WorkspacePickerService";
+import { createMainWindowOptions } from "./window/createMainWindowOptions";
 
 function resolveDefaultWorkspacePath() {
   const configuredWorkspacePath = process.env.WIN_TOGETHER_DEFAULT_WORKSPACE?.trim();
@@ -26,17 +27,30 @@ const runtimeService = new AppRuntimeService({
 });
 
 function createWindow() {
-  const window = new BrowserWindow({
-    width: 1280,
-    height: 800,
-    webPreferences: {
-      preload: path.join(__dirname, "../preload/index.mjs"),
-      contextIsolation: true,
-      nodeIntegration: false,
-    },
-  });
+  const window = new BrowserWindow(createMainWindowOptions(path.join(__dirname, "../preload/index.mjs")));
 
   const rendererUrl = process.env.ELECTRON_RENDERER_URL;
+
+  window.webContents.on("did-fail-load", (_event, errorCode, errorDescription, validatedUrl) => {
+    console.error("[Win Together] Renderer failed to load", {
+      errorCode,
+      errorDescription,
+      validatedUrl
+    });
+  });
+
+  window.webContents.on("render-process-gone", (_event, details) => {
+    console.error("[Win Together] Renderer process exited", details);
+  });
+
+  window.webContents.on("console-message", (_event, level, message, line, sourceId) => {
+    console.log("[Win Together] Renderer console", {
+      level,
+      message,
+      line,
+      sourceId
+    });
+  });
 
   if (rendererUrl) {
     void window.loadURL(rendererUrl);
