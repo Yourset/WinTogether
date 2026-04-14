@@ -7,6 +7,18 @@ import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { TeamRoomPage } from "../../src/renderer/routes/TeamRoomPage";
 import { useAppStore } from "../../src/renderer/store/appStore";
 
+function createDeferredPromise<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason?: unknown) => void;
+
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  return { promise, resolve, reject };
+}
+
 function LocationProbe() {
   const location = useLocation();
 
@@ -171,6 +183,46 @@ describe("TeamRoomPage", () => {
         workspacePath: "D:/manual-override"
       });
     });
+  });
+
+  it("does not let a delayed default workspace overwrite a manual workspace path", async () => {
+    useAppStore.setState({ activeMissionId: null, timelineItems: [] });
+    const deferredDefaultWorkspace = createDeferredPromise<string>();
+
+    Object.defineProperty(window, "winTogether", {
+      configurable: true,
+      value: {
+        getDefaultWorkspacePath: vi.fn().mockReturnValue(deferredDefaultWorkspace.promise),
+        startMission: vi.fn()
+      }
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/team/draft"]}>
+        <Routes>
+          <Route path="/team/:missionId" element={<TeamRoomPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const workspaceField = screen.getByLabelText("Workspace path") as HTMLInputElement;
+    expect(workspaceField.value).toBe("");
+    expect(screen.getByText("Loading the app default workspace...")).toBeTruthy();
+
+    fireEvent.change(workspaceField, {
+      target: { value: "D:/manual-before-default" }
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Using a workspace path you entered for this mission.")).toBeTruthy();
+    });
+
+    deferredDefaultWorkspace.resolve("D:/late-default");
+
+    await waitFor(() => {
+      expect(workspaceField.value).toBe("D:/manual-before-default");
+    });
+    expect(screen.getByText("Using a workspace path you entered for this mission.")).toBeTruthy();
   });
 
   it("shows a visible error when mission start fails and keeps the tester on the draft route", async () => {

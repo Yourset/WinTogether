@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useAppStore } from "../../store/appStore";
@@ -14,6 +14,7 @@ function getErrorMessage(error: unknown) {
 export function MissionComposer() {
   const navigate = useNavigate();
   const workspaceInputId = useId();
+  const hasManualWorkspaceEdit = useRef(false);
   const [goal, setGoal] = useState("");
   const [workspacePath, setWorkspacePath] = useState("");
   const [workspaceSource, setWorkspaceSource] = useState<"loading" | "default" | "manual" | "missing">("loading");
@@ -27,7 +28,7 @@ export function MissionComposer() {
     void window.winTogether
       .getDefaultWorkspacePath()
       .then((defaultWorkspacePath) => {
-        if (!isMounted) {
+        if (!isMounted || hasManualWorkspaceEdit.current) {
           return;
         }
 
@@ -36,7 +37,7 @@ export function MissionComposer() {
         setWorkspaceSource(nextWorkspacePath ? "default" : "missing");
       })
       .catch((error: unknown) => {
-        if (!isMounted) {
+        if (!isMounted || hasManualWorkspaceEdit.current) {
           return;
         }
 
@@ -97,6 +98,7 @@ export function MissionComposer() {
           value={workspacePath}
           placeholder="Enter a workspace path"
           onChange={(event) => {
+            hasManualWorkspaceEdit.current = true;
             setWorkspacePath(event.target.value);
             setWorkspaceSource("manual");
             setErrorMessage(null);
