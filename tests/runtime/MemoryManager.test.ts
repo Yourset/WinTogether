@@ -69,4 +69,26 @@ describe("MemoryManager", () => {
       })
     );
   });
+
+  it("creates the default team template alongside the base memory structure", async () => {
+    const rootPath = await mkdtemp(join(tmpdir(), "memory-manager-template-"));
+    const memoryManager = new MemoryManager(rootPath);
+
+    await memoryManager.ensureBaseStructure();
+
+    const templatePath = join(
+      rootPath,
+      "WIN_MEMORY",
+      "teams",
+      "templates",
+      "default-software-team.json"
+    );
+    const template = await readFile(templatePath, "utf8");
+
+    expect(JSON.parse(template)).toMatchObject({
+      id: "default-software-team",
+      name: "Default Software Team",
+      allowsDynamicExpansion: true
+    });
+  });
 });

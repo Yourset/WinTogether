@@ -1,0 +1,43 @@
+{
+  "id": "default-software-team",
+  "name": "Default Software Team",
+  "summary": "A small software delivery team with a Captain and four specialist roles.",
+  "allowsDynamicExpansion": true,
+  "members": [
+    {
+      "id": "captain",
+      "role": "captain",
+      "displayName": "Captain",
+      "description": "Owns direction, scope, and coordination.",
+      "primary": true
+    },
+    {
+      "id": "researcher",
+      "role": "researcher",
+      "displayName": "Researcher",
+      "description": "Clarifies requirements and gathers context.",
+      "primary": false
+    },
+    {
+      "id": "builder",
+      "role": "builder",
+      "displayName": "Builder",
+      "description": "Implements the requested change.",
+      "primary": false
+    },
+    {
+      "id": "reviewer",
+      "role": "reviewer",
+      "displayName": "Reviewer",
+      "description": "Checks quality, risks, and regressions.",
+      "primary": false
+    },
+    {
+      "id": "tester",
+      "role": "tester",
+      "displayName": "Tester",
+      "description": "Verifies behavior from the user perspective.",
+      "primary": false
+    }
+  ]
+}

@@ -18,6 +18,7 @@ const TEMPLATE_FILES = [
   "teams/roles/builder.md",
   "teams/roles/reviewer.md",
   "teams/roles/tester.md",
+  "teams/templates/default-software-team.json",
   "missions/INDEX.md",
   "workspaces/INDEX.md",
   "knowledge/INDEX.md",
