@@ -1,31 +1,36 @@
-import { access, readFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
-import { join, resolve } from "node:path";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import type { TeamTemplate } from "../../shared/contracts/teamTemplate";
+import { parseTeamTemplateJson } from "../../shared/contracts/teamTemplate";
+import { resolveTemplateRoot } from "./MemoryManager";
 
 const MODULE_URL = import.meta.url;
 const TEMPLATE_FILE = join("teams", "templates", "default-software-team.json");
 
 export async function loadDefaultTeamTemplate(moduleUrl: string = MODULE_URL): Promise<TeamTemplate> {
   const templateRoot = await resolveTeamTemplateRoot(moduleUrl);
-  const rawTemplate = await readFile(join(templateRoot, TEMPLATE_FILE), "utf8");
-  return JSON.parse(rawTemplate) as TeamTemplate;
+  const templatePath = join(templateRoot, TEMPLATE_FILE);
+  const rawTemplate = await readTemplateFile(templatePath);
+
+  return parseTeamTemplateJson(rawTemplate, `default team template at ${templatePath}`);
 }
 
 async function resolveTeamTemplateRoot(moduleUrl: string = MODULE_URL) {
-  const candidateRoots = [
-    fileURLToPath(new URL("../../../WIN_MEMORY/", moduleUrl)),
-    fileURLToPath(new URL("../WIN_MEMORY/", moduleUrl))
-  ];
+  return resolveTemplateRoot(moduleUrl);
+}
 
-  for (const candidateRoot of candidateRoots) {
-    try {
-      await access(join(candidateRoot, TEMPLATE_FILE));
-      return resolve(candidateRoot);
-    } catch {
-      // Try the next layout.
-    }
+async function readTemplateFile(templatePath: string): Promise<string> {
+  try {
+    return await readFile(templatePath, "utf8");
+  } catch (error) {
+    throw new Error(`Unable to read default team template at ${templatePath}: ${readErrorMessage(error)}`);
+  }
+}
+
+function readErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
   }
 
-  throw new Error(`Unable to locate the default team template from ${moduleUrl}`);
+  return String(error);
 }

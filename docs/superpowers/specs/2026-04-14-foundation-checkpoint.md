@@ -27,6 +27,7 @@ Implemented in the current build:
 - One-click Windows development launcher: `start-dev.bat`
 - Low-value desktop menu removed to reduce shell noise
 - Default software team template now flows into mission start, Team Room roster, browser bridge, and Playwright coverage so the first visible roster is Captain, Researcher, Builder, Reviewer, and Tester instead of a hardcoded array
+- Team template loading now performs minimal structural validation, and the runtime registry can enumerate available templates from the template directory while keeping built-in and generated locations separate for future AI-generated template support
 
 ## 2. What Can Be Tested Now
 
@@ -49,7 +50,7 @@ This build supports the following tester-visible loop:
 - Team Room is more realistic now, but still not a streaming multi-agent transcript system
 - Memory Center currently shows the first real slice of memory (`INDEX.md` + current work log), not a full browsable memory explorer
 - No packaged `.exe` yet; testing still uses development mode
-- The default template loader is still a simple JSON reader and does not yet validate template schema beyond the current file shape
+- Template validation is still intentionally lightweight and does not yet use a dedicated schema library
 
 ## 4. Recommended Manual Test Path
 
