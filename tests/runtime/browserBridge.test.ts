@@ -36,6 +36,19 @@ describe("browserBridge", () => {
 
     expect(missionResult.mission.goal).toBe("Build the first login flow");
     expect(missionResult.mission.workspacePath).toBe("D:/development/WinTogether2");
+    expect(missionResult.team.template).toEqual(
+      expect.objectContaining({
+        id: "default-software-team",
+        name: "Default Software Team"
+      })
+    );
+    expect(missionResult.team.members.map((member) => member.displayName)).toEqual([
+      "Browser Captain",
+      "Browser Researcher",
+      "Browser Builder",
+      "Browser Reviewer",
+      "Browser Tester"
+    ]);
     expect(missionResult.recentMission).toEqual(
       expect.objectContaining({
         id: missionResult.mission.id,
@@ -45,6 +58,11 @@ describe("browserBridge", () => {
     );
     expect(missionResult.events?.some((event) => event.type === "mission.created")).toBe(true);
     expect(missionResult.events?.some((event) => event.type === "agent.spawned")).toBe(true);
+    expect(
+      missionResult.events?.flatMap((event) =>
+        event.type === "agent.spawned" ? [event.payload.agent.name] : []
+      )
+    ).toEqual(["Browser Captain", "Browser Researcher", "Browser Builder", "Browser Reviewer", "Browser Tester"]);
     expect(missionResult.events?.some((event) => event.type === "agent.message")).toBe(true);
     expect(
       missionResult.events?.find((event) => event.type === "memory.written")?.payload.memory.sourceEventId

@@ -11,6 +11,7 @@ import { useAppStore } from "../store/appStore";
 export function TeamRoomPage() {
   const { missionId } = useParams();
   const activeMissionId = useAppStore((state) => state.activeMissionId);
+  const activeTeam = useAppStore((state) => state.activeTeam);
   const language = useAppStore((state) => state.language);
   const setActiveMissionId = useAppStore((state) => state.setActiveMissionId);
   const timelineItems = useAppStore((state) => state.timelineItems);
@@ -20,8 +21,8 @@ export function TeamRoomPage() {
     setActiveMissionId(missionId ?? null);
   }, [missionId, setActiveMissionId]);
 
-  const agents = ["Captain", "Researcher", "Builder"];
   const currentMissionId = activeMissionId ?? missionId ?? null;
+  const team = currentMissionId && activeMissionId === currentMissionId ? activeTeam : null;
 
   return (
     <section data-testid="team-room-page" className="page-stack page-stack--team-room">
@@ -33,7 +34,7 @@ export function TeamRoomPage() {
       </div>
 
       <div className="team-room-grid">
-        <RosterPanel agents={agents} />
+        <RosterPanel team={team} />
         <div className="team-room-grid__middle">
           <MessageTimeline items={timelineItems} />
           <MissionComposer />

@@ -28,6 +28,29 @@ class FakeRuntime implements AppRuntime {
         name: "Captain",
         status: "planning"
       },
+      team: {
+        template: {
+          id: "default-software-team",
+          name: "Default Software Team",
+          summary: "A small software delivery team with a Captain and four specialist roles.",
+          allowsDynamicExpansion: true
+        },
+        members: [
+          {
+            templateMemberId: "captain",
+            role: "captain",
+            displayName: "Captain",
+            description: "Owns direction, scope, and coordination.",
+            primary: true,
+            agent: {
+              id: "agent-123",
+              role: "captain",
+              name: "Captain",
+              status: "planning"
+            }
+          }
+        ]
+      },
       persistence: {
         transcript: {
           status: "written"
@@ -60,6 +83,7 @@ describe("AppRuntimeService", () => {
       }
     ]);
     expect(result.mission.id).toBe("mission-123");
+    expect(result.team.template.name).toBe("Default Software Team");
 
     const workLog = await readFile(join(rootPath, "WIN_MEMORY", "work-log", "current.md"), "utf8");
     expect(workLog).toContain("Mission started: Build the Team Room loop");

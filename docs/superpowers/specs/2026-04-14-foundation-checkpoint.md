@@ -26,6 +26,7 @@ Implemented in the current build:
 - Mission History page showing stored recent mission summaries
 - One-click Windows development launcher: `start-dev.bat`
 - Low-value desktop menu removed to reduce shell noise
+- Default software team template now flows into mission start, Team Room roster, browser bridge, and Playwright coverage so the first visible roster is Captain, Researcher, Builder, Reviewer, and Tester instead of a hardcoded array
 
 ## 2. What Can Be Tested Now
 
@@ -40,6 +41,7 @@ This build supports the following tester-visible loop:
 7. Verify the Team Room timeline shows the first real Codex CLI response in addition to mission/captain events
 8. Open Mission History and confirm stored mission summaries are visible
 9. Open Memory Center and confirm it shows the memory index and the current work log
+10. Start a mission and confirm the Team Room roster now comes from the default software team template
 
 ## 3. Known Gaps
 
@@ -47,6 +49,7 @@ This build supports the following tester-visible loop:
 - Team Room is more realistic now, but still not a streaming multi-agent transcript system
 - Memory Center currently shows the first real slice of memory (`INDEX.md` + current work log), not a full browsable memory explorer
 - No packaged `.exe` yet; testing still uses development mode
+- The default template loader is still a simple JSON reader and does not yet validate template schema beyond the current file shape
 
 ## 4. Recommended Manual Test Path
 
@@ -93,5 +96,6 @@ The current tester-facing browser baseline now includes:
 - a browser bridge error mode that can simulate mission-start or smoke-test failure without depending on the real CLI
 - a Playwright error-state journey that verifies mission-start failure is surfaced to the user with a pending state first and a visible alert afterward
 - a dedicated Electron smoke path that builds the app and launches the real desktop shell with Playwright, verifying preload access, IPC calls, and the main workbench without using the browser bridge
+- template-driven Team Room roster data that now flows through runtime, renderer state, browser bridge, and Playwright coverage
 
 This document should be updated whenever Win Together reaches another tester-facing milestone.

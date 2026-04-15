@@ -19,7 +19,7 @@ test("a first-time user can revisit mission history and memory after starting a 
   expect(missionIdMatch?.[1]).toBeTruthy();
   const missionId = missionIdMatch?.[1] ?? "";
   await expect(page.getByTestId("team-room-page")).toBeVisible({ timeout: 30000 });
-  await expect(page.getByText(/Browser Captain is ready to coordinate the first mission\./)).toBeVisible({
+  await expect(page.getByText(/Browser bridge is ready\./)).toBeVisible({
     timeout: 30000
   });
 

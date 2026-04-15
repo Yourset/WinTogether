@@ -28,7 +28,7 @@ test("a first-time user can see visible waiting states while the browser bridge 
   });
   await expect(page).toHaveURL(/\/team\/mission-/);
   await expect(page.getByRole("heading", { name: "Team Room" })).toBeVisible({ timeout: 30000 });
-  await expect(page.getByText("Captain received the first Codex CLI response: Browser Captain is ready to coordinate the first mission.")).toBeVisible({
+  await expect(page.getByText("Captain received the first Codex CLI response: Browser bridge is ready.")).toBeVisible({
     timeout: 30000
   });
 });

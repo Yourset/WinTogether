@@ -96,7 +96,7 @@ export class AppRuntimeImpl implements AppRuntime {
     await this.transcriptStore.appendEntry({
       missionId: result.mission.id,
       mission: result.mission,
-      message: `Started mission: ${result.mission.goal}`,
+      message: `Started mission: ${result.mission.goal} with ${result.team.template.name}`,
       timestamp: result.mission.createdAt
     });
 

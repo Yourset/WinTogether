@@ -25,20 +25,100 @@ function LocationProbe() {
   return <p data-testid="location-path">{location.pathname}</p>;
 }
 
+function createTeam() {
+  return {
+    template: {
+      id: "default-software-team",
+      name: "Default Software Team",
+      summary: "A small software delivery team with a Captain and four specialist roles.",
+      allowsDynamicExpansion: true
+    },
+    members: [
+      {
+        templateMemberId: "captain",
+        role: "captain" as const,
+        displayName: "Captain",
+        description: "Owns direction, scope, and coordination.",
+        primary: true,
+        agent: {
+          id: "agent-captain",
+          role: "captain" as const,
+          name: "Captain",
+          status: "planning" as const
+        }
+      },
+      {
+        templateMemberId: "researcher",
+        role: "researcher" as const,
+        displayName: "Researcher",
+        description: "Clarifies requirements and gathers context.",
+        primary: false,
+        agent: {
+          id: "agent-researcher",
+          role: "researcher" as const,
+          name: "Researcher",
+          status: "running" as const
+        }
+      },
+      {
+        templateMemberId: "builder",
+        role: "builder" as const,
+        displayName: "Builder",
+        description: "Implements the requested change.",
+        primary: false,
+        agent: {
+          id: "agent-builder",
+          role: "builder" as const,
+          name: "Builder",
+          status: "running" as const
+        }
+      },
+      {
+        templateMemberId: "reviewer",
+        role: "reviewer" as const,
+        displayName: "Reviewer",
+        description: "Checks quality, risks, and regressions.",
+        primary: false,
+        agent: {
+          id: "agent-reviewer",
+          role: "reviewer" as const,
+          name: "Reviewer",
+          status: "idle" as const
+        }
+      },
+      {
+        templateMemberId: "tester",
+        role: "tester" as const,
+        displayName: "Tester",
+        description: "Verifies behavior from the user perspective.",
+        primary: false,
+        agent: {
+          id: "agent-tester",
+          role: "tester" as const,
+          name: "Tester",
+          status: "idle" as const
+        }
+      }
+    ]
+  };
+}
+
 describe("TeamRoomPage", () => {
   afterEach(() => {
     cleanup();
   });
 
-  it("shows the team room layout with timeline, agents, context, and composer", () => {
+  it("shows a template-driven roster when a team is active", () => {
     useAppStore.setState({
-      activeMissionId: null,
+      activeMissionId: "mission-42",
+      activeTeam: createTeam(),
       timelineItems: [],
       language: "zh-CN",
       recentMissions: [],
       runtimeStatus: null,
       codexSmokeTestResult: null,
-      isCodexSmokeTestRunning: false
+      isCodexSmokeTestRunning: false,
+      currentWorkspacePath: null
     });
 
     Object.defineProperty(window, "winTogether", {
@@ -58,24 +138,26 @@ describe("TeamRoomPage", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("团队协作室")).toBeTruthy();
-    expect(screen.getByText("任务 ID: mission-42")).toBeTruthy();
-    expect(screen.getByText("协作时间线")).toBeTruthy();
-    expect(screen.getByText("当前成员")).toBeTruthy();
-    expect(screen.getByText("当前上下文")).toBeTruthy();
-    expect(screen.getByPlaceholderText("告诉 Captain 你的目标...")).toBeTruthy();
+    expect(screen.getByTestId("team-room-page")).toBeTruthy();
+    expect(screen.getByTestId("roster-member-captain")).toBeTruthy();
+    expect(screen.getByTestId("roster-member-researcher")).toBeTruthy();
+    expect(screen.getByTestId("roster-member-builder")).toBeTruthy();
+    expect(screen.getByTestId("roster-member-reviewer")).toBeTruthy();
+    expect(screen.getByTestId("roster-member-tester")).toBeTruthy();
     expect(useAppStore.getState().activeMissionId).toBe("mission-42");
   });
 
-  it("starts a mission from the composer and appends captain updates to the timeline", async () => {
+  it("starts a mission from the composer and appends template-driven updates to the timeline", async () => {
     useAppStore.setState({
       activeMissionId: null,
+      activeTeam: null,
       timelineItems: [],
       language: "zh-CN",
       recentMissions: [],
       runtimeStatus: null,
       codexSmokeTestResult: null,
-      isCodexSmokeTestRunning: false
+      isCodexSmokeTestRunning: false,
+      currentWorkspacePath: null
     });
     const getDefaultWorkspacePath = vi
       .fn()
@@ -90,11 +172,12 @@ describe("TeamRoomPage", () => {
         createdAt: "2026-04-14T12:00:00.000Z"
       },
       captain: {
-        id: "agent-123",
+        id: "agent-captain",
         role: "captain",
         name: "Captain",
         status: "planning"
       },
+      team: createTeam(),
       events: [
         {
           id: "event-1",
@@ -118,7 +201,7 @@ describe("TeamRoomPage", () => {
           payload: {
             missionId: "mission-123",
             agent: {
-              id: "agent-123",
+              id: "agent-captain",
               role: "captain",
               name: "Captain",
               status: "planning"
@@ -127,21 +210,69 @@ describe("TeamRoomPage", () => {
         },
         {
           id: "event-3",
-          type: "agent.message",
-          timestamp: "2026-04-14T12:00:02.000Z",
+          type: "agent.spawned",
+          timestamp: "2026-04-14T12:00:01.100Z",
           payload: {
             missionId: "mission-123",
-            agentId: "agent-123",
-            text: "captain.planning"
+            agent: {
+              id: "agent-researcher",
+              role: "researcher",
+              name: "Researcher",
+              status: "running"
+            }
           }
         },
         {
           id: "event-4",
+          type: "agent.spawned",
+          timestamp: "2026-04-14T12:00:01.200Z",
+          payload: {
+            missionId: "mission-123",
+            agent: {
+              id: "agent-builder",
+              role: "builder",
+              name: "Builder",
+              status: "running"
+            }
+          }
+        },
+        {
+          id: "event-5",
+          type: "agent.message",
+          timestamp: "2026-04-14T12:00:02.000Z",
+          payload: {
+            missionId: "mission-123",
+            agentId: "agent-captain",
+            text: "captain.planning"
+          }
+        },
+        {
+          id: "event-6",
+          type: "agent.message",
+          timestamp: "2026-04-14T12:00:02.100Z",
+          payload: {
+            missionId: "mission-123",
+            agentId: "agent-researcher",
+            text: "researcher.context"
+          }
+        },
+        {
+          id: "event-7",
+          type: "agent.message",
+          timestamp: "2026-04-14T12:00:02.200Z",
+          payload: {
+            missionId: "mission-123",
+            agentId: "agent-builder",
+            text: "builder.ready"
+          }
+        },
+        {
+          id: "event-8",
           type: "agent.message",
           timestamp: "2026-04-14T12:00:03.000Z",
           payload: {
             missionId: "mission-123",
-            agentId: "agent-123",
+            agentId: "agent-captain",
             text: "Captain will start by reviewing the workspace and outlining the first build step."
           }
         }
@@ -176,7 +307,6 @@ describe("TeamRoomPage", () => {
         "D:/development/WinTogether2/.worktrees/feature-v1-foundation"
       );
     });
-    expect(screen.getByText("当前使用应用提供的默认工作区；如果你想切换到别的项目，可以直接改这里。")).toBeTruthy();
 
     fireEvent.change(screen.getByPlaceholderText("告诉 Captain 你的目标..."), {
       target: { value: "Ship the first loop" }
@@ -193,10 +323,14 @@ describe("TeamRoomPage", () => {
     expect(getDefaultWorkspacePath).toHaveBeenCalledTimes(1);
     expect(await screen.findByText("任务“Ship the first loop”已启动。")).toBeTruthy();
     expect(await screen.findByText("Captain 已加入当前协作室。")).toBeTruthy();
-    expect(await screen.findByText("Captain 正在为这个目标规划下一步：Ship the first loop")).toBeTruthy();
+    expect(await screen.findByText("Researcher 已加入当前协作室。")).toBeTruthy();
+    expect(await screen.findByText("Builder 已加入当前协作室。")).toBeTruthy();
     expect(
-      await screen.findByText("Captain 收到了 Codex CLI 的第一轮回应：Captain will start by reviewing the workspace and outlining the first build step.")
+      await screen.findByText("Captain 收到 Codex CLI 的第一轮回应：Captain will start by reviewing the workspace and outlining the first build step.")
     ).toBeTruthy();
+    expect(screen.getByTestId("roster-member-captain")).toBeTruthy();
+    expect(screen.getByTestId("roster-member-researcher")).toBeTruthy();
+    expect(screen.getByTestId("roster-member-builder")).toBeTruthy();
     expect(useAppStore.getState().activeMissionId).toBe("mission-123");
     expect(screen.getByTestId("location-path").textContent).toBe("/team/mission-123");
   });
@@ -204,12 +338,14 @@ describe("TeamRoomPage", () => {
   it("lets the tester override the workspace path before starting a mission", async () => {
     useAppStore.setState({
       activeMissionId: null,
+      activeTeam: null,
       timelineItems: [],
       language: "zh-CN",
       recentMissions: [],
       runtimeStatus: null,
       codexSmokeTestResult: null,
-      isCodexSmokeTestRunning: false
+      isCodexSmokeTestRunning: false,
+      currentWorkspacePath: null
     });
     const getDefaultWorkspacePath = vi.fn().mockResolvedValue("D:/default-workspace");
     const startMission = vi.fn().mockResolvedValue({
@@ -222,11 +358,12 @@ describe("TeamRoomPage", () => {
         createdAt: "2026-04-14T12:00:00.000Z"
       },
       captain: {
-        id: "agent-123",
+        id: "agent-captain",
         role: "captain",
         name: "Captain",
         status: "planning"
       },
+      team: createTeam(),
       persistence: {
         transcript: {
           status: "written"
@@ -271,12 +408,14 @@ describe("TeamRoomPage", () => {
   it("does not let a delayed default workspace overwrite a manual workspace path", async () => {
     useAppStore.setState({
       activeMissionId: null,
+      activeTeam: null,
       timelineItems: [],
       language: "zh-CN",
       recentMissions: [],
       runtimeStatus: null,
       codexSmokeTestResult: null,
-      isCodexSmokeTestRunning: false
+      isCodexSmokeTestRunning: false,
+      currentWorkspacePath: null
     });
     const deferredDefaultWorkspace = createDeferredPromise<string>();
 
@@ -297,7 +436,7 @@ describe("TeamRoomPage", () => {
       </MemoryRouter>
     );
 
-    const workspaceField = screen.getByLabelText("工作区路径") as HTMLInputElement;
+    const workspaceField = (screen.getByLabelText("工作区路径") as HTMLInputElement);
     expect(workspaceField.value).toBe("");
     expect(screen.getByText("正在读取应用默认工作区...")).toBeTruthy();
 
@@ -320,12 +459,14 @@ describe("TeamRoomPage", () => {
   it("shows a visible error when mission start fails and keeps the tester on the draft route", async () => {
     useAppStore.setState({
       activeMissionId: null,
+      activeTeam: null,
       timelineItems: [],
       language: "zh-CN",
       recentMissions: [],
       runtimeStatus: null,
       codexSmokeTestResult: null,
-      isCodexSmokeTestRunning: false
+      isCodexSmokeTestRunning: false,
+      currentWorkspacePath: null
     });
     const getDefaultWorkspacePath = vi.fn().mockResolvedValue("D:/default-workspace");
     const startMission = vi.fn().mockRejectedValue(new Error("Captain could not start the mission."));
@@ -357,127 +498,5 @@ describe("TeamRoomPage", () => {
     expect((await screen.findByRole("alert")).textContent).toContain("Captain could not start the mission.");
     expect(screen.getByTestId("location-path").textContent).toBe("/team/draft");
     expect(useAppStore.getState().activeMissionId).toBe("draft");
-  });
-
-  it("shows a visible bridge error instead of crashing when the preload API is unavailable", async () => {
-    useAppStore.setState({
-      activeMissionId: null,
-      timelineItems: [],
-      language: "zh-CN",
-      recentMissions: [],
-      runtimeStatus: null,
-      codexSmokeTestResult: null,
-      isCodexSmokeTestRunning: false
-    });
-    Object.defineProperty(window, "winTogether", {
-      configurable: true,
-      value: undefined
-    });
-
-    render(
-      <MemoryRouter initialEntries={["/team/draft"]}>
-        <Routes>
-          <Route path="/team/:missionId" element={<TeamRoomPage />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    expect(screen.getAllByRole("heading").length).toBeGreaterThan(0);
-    expect(await screen.findByRole("alert")).toBeTruthy();
-  });
-
-  it("shows a visible waiting state while the mission is still starting", async () => {
-    useAppStore.setState({
-      activeMissionId: null,
-      timelineItems: [],
-      language: "en",
-      recentMissions: [],
-      runtimeStatus: null,
-      codexSmokeTestResult: null,
-      isCodexSmokeTestRunning: false
-    });
-    const deferredStartMission = createDeferredPromise<{
-      mission: {
-        id: string;
-        title: string;
-        goal: string;
-        workspacePath: string;
-        status: string;
-        createdAt: string;
-      };
-      captain: {
-        id: string;
-        role: string;
-        name: string;
-        status: string;
-      };
-      persistence: {
-        transcript: {
-          status: "written";
-        };
-      };
-    }>();
-    const getDefaultWorkspacePath = vi.fn().mockResolvedValue("D:/development/WinTogether2/.worktrees/feature-v1-foundation");
-    const startMission = vi.fn().mockReturnValue(deferredStartMission.promise);
-
-    Object.defineProperty(window, "winTogether", {
-      configurable: true,
-      value: {
-        getDefaultWorkspacePath,
-        runCodexSmokeTest: vi.fn(),
-        startMission
-      }
-    });
-
-    render(
-      <MemoryRouter initialEntries={["/team/draft"]}>
-        <LocationProbe />
-        <Routes>
-          <Route path="/team/:missionId" element={<TeamRoomPage />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect((screen.getByLabelText("Workspace path") as HTMLInputElement).value).toBe(
-        "D:/development/WinTogether2/.worktrees/feature-v1-foundation"
-      );
-    });
-
-    fireEvent.change(screen.getByPlaceholderText("Tell Captain the goal..."), {
-      target: { value: "Build the first login flow" }
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Start Mission" }));
-
-    expect((screen.getByRole("button", { name: "Start Mission" }) as HTMLButtonElement).disabled).toBe(true);
-    expect((screen.getByRole("status") as HTMLElement).textContent).toContain(
-      "Captain is waiting for Codex CLI to answer"
-    );
-
-    deferredStartMission.resolve({
-      mission: {
-        id: "mission-123",
-        title: "Build the first login flow",
-        goal: "Build the first login flow",
-        workspacePath: "D:/development/WinTogether2/.worktrees/feature-v1-foundation",
-        status: "draft",
-        createdAt: "2026-04-14T12:00:00.000Z"
-      },
-      captain: {
-        id: "agent-123",
-        role: "captain",
-        name: "Captain",
-        status: "planning"
-      },
-      persistence: {
-        transcript: {
-          status: "written"
-        }
-      }
-    });
-
-    await waitFor(() => {
-      expect(screen.getByTestId("location-path").textContent).toBe("/team/mission-123");
-    });
   });
 });

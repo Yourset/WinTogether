@@ -1,6 +1,7 @@
 import type { AppEvent } from "../../shared/contracts/events";
 import type { AgentRecord } from "../../shared/contracts/agent";
 import type { MissionRecord } from "../../shared/contracts/mission";
+import type { MissionTeamRecord } from "../../shared/contracts/team";
 import type {
   CodexSmokeTestResult,
   MemoryOverview,
@@ -63,6 +64,54 @@ function wait(ms: number) {
   });
 }
 
+function createTeam(): MissionTeamRecord {
+  return {
+    template: {
+      id: "default-software-team",
+      name: "Default Software Team",
+      summary: "A small software delivery team with a Captain and four specialist roles.",
+      allowsDynamicExpansion: true
+    },
+    members: [
+      createTeamMember("captain", "captain", "Browser Captain", "Owns direction, scope, and coordination.", true, "planning"),
+      createTeamMember(
+        "researcher",
+        "researcher",
+        "Browser Researcher",
+        "Clarifies requirements and gathers context.",
+        false,
+        "running"
+      ),
+      createTeamMember("builder", "builder", "Browser Builder", "Implements the requested change.", false, "running"),
+      createTeamMember("reviewer", "reviewer", "Browser Reviewer", "Checks quality, risks, and regressions.", false, "idle"),
+      createTeamMember("tester", "tester", "Browser Tester", "Verifies behavior from the user perspective.", false, "idle")
+    ]
+  };
+}
+
+function createTeamMember(
+  templateMemberId: string,
+  role: AgentRecord["role"],
+  displayName: string,
+  description: string,
+  primary: boolean,
+  status: AgentRecord["status"]
+) {
+  return {
+    templateMemberId,
+    role,
+    displayName,
+    description,
+    primary,
+    agent: {
+      id: makeId("agent"),
+      role,
+      name: displayName,
+      status
+    }
+  };
+}
+
 function createMission(goal: string, workspacePath: string): MissionRecord {
   const createdAt = nowIso();
 
@@ -76,27 +125,16 @@ function createMission(goal: string, workspacePath: string): MissionRecord {
   };
 }
 
-function createCaptain(): AgentRecord {
-  return {
-    id: makeId("agent"),
-    role: "captain",
-    name: "Browser Captain",
-    status: "planning"
-  };
-}
-
-function formatSummary(goal: string) {
-  return `Browser Captain summarized the first pass for "${goal}".`;
-}
-
-function createMissionEvents(mission: MissionRecord, captain: AgentRecord): AppEvent[] {
+function createMissionEvents(mission: MissionRecord, team: MissionTeamRecord): AppEvent[] {
   const createdAt = mission.createdAt;
-  const responseText = "Browser Captain is ready to coordinate the first mission.";
   const executionId = makeId("execution");
   const summaryEventId = makeId("event");
   const memoryEventId = makeId("event");
+  const captain = team.members.find((member) => member.primary) ?? team.members[0];
+  const researcher = team.members.find((member) => member.role === "researcher");
+  const builder = team.members.find((member) => member.role === "builder");
 
-  return [
+  const events: AppEvent[] = [
     {
       id: makeId("event"),
       type: "mission.created",
@@ -107,67 +145,121 @@ function createMissionEvents(mission: MissionRecord, captain: AgentRecord): AppE
     },
     {
       id: makeId("event"),
-      type: "agent.spawned",
-      timestamp: createdAt,
-      payload: {
-        agent: captain,
-        missionId: mission.id
-      }
-    },
-    {
-      id: makeId("event"),
       type: "execution.started",
       timestamp: createdAt,
       payload: {
         executionId,
         missionId: mission.id
       }
-    },
-    {
+    }
+  ];
+
+  for (const member of team.members) {
+    events.push({
+      id: makeId("event"),
+      type: "agent.spawned",
+      timestamp: createdAt,
+      payload: {
+        agent: member.agent,
+        missionId: mission.id
+      }
+    });
+  }
+
+  if (captain) {
+    events.push({
       id: makeId("event"),
       type: "agent.message",
       timestamp: createdAt,
       payload: {
         missionId: mission.id,
-        agentId: captain.id,
-        text: responseText
+        agentId: captain.agent.id,
+        text: "captain.planning"
       }
-    },
-    {
+    });
+  }
+
+  if (researcher) {
+    events.push({
+      id: makeId("event"),
+      type: "agent.message",
+      timestamp: nowIso(),
+      payload: {
+        missionId: mission.id,
+        agentId: researcher.agent.id,
+        text: "researcher.context"
+      }
+    });
+  }
+
+  if (builder) {
+    events.push({
+      id: makeId("event"),
+      type: "agent.message",
+      timestamp: nowIso(),
+      payload: {
+        missionId: mission.id,
+        agentId: builder.agent.id,
+        text: "builder.ready"
+      }
+    });
+  }
+
+  if (captain) {
+    events.push({
       id: summaryEventId,
       type: "agent.message",
       timestamp: nowIso(),
       payload: {
         missionId: mission.id,
-        agentId: captain.id,
+        agentId: captain.agent.id,
         text: "captain.summary"
       }
-    },
-    {
+    });
+
+    events.push({
       id: makeId("event"),
-      type: "execution.finished",
+      type: "agent.message",
       timestamp: nowIso(),
       payload: {
-        executionId,
         missionId: mission.id,
-        status: "success"
+        agentId: captain.agent.id,
+        text: "Browser bridge is ready."
       }
-    },
-    {
-      id: memoryEventId,
-      type: "memory.written",
-      timestamp: nowIso(),
-      payload: {
-        memory: {
-          id: makeId("memory"),
-          scope: "mission",
-          targetPath: `WIN_MEMORY/missions/${mission.id}.json`,
-          summary: `Browser bridge recorded ${mission.goal}`,
-          sourceEventId: summaryEventId
-        }
+    });
+  }
+
+  events.push({
+    id: makeId("event"),
+    type: "execution.finished",
+    timestamp: nowIso(),
+    payload: {
+      executionId,
+      missionId: mission.id,
+      status: "success"
+    }
+  });
+
+  events.push({
+    id: memoryEventId,
+    type: "memory.written",
+    timestamp: nowIso(),
+    payload: {
+      memory: {
+        id: makeId("memory"),
+        scope: "mission",
+        targetPath: `WIN_MEMORY/missions/${mission.id}.json`,
+        summary: `Browser bridge recorded ${mission.goal}`,
+        sourceEventId: summaryEventId
       }
     }
-  ];
+  });
+
+  return events;
+}
+
+function formatSummary(goal: string) {
+  return `Browser Captain summarized the first pass for "${goal}".`;
 }
 
 export function shouldInstallBrowserBridge(input: BrowserBridgeActivationInput) {
@@ -185,7 +277,7 @@ export function createBrowserBridge(options: BrowserBridgeOptions = {}): WinToge
     "# Browser bridge",
     "",
     "- Mirrors the renderer bridge during pure Vite browser development.",
-    "- Keeps mission flow and recent mission state available without Electron preload."
+    "- Keeps mission flow, team roster state, and recent mission history available without Electron preload."
   ].join("\n");
   let workLogContent = [
     "# Browser work log",
@@ -235,8 +327,9 @@ export function createBrowserBridge(options: BrowserBridgeOptions = {}): WinToge
       }
 
       const mission = createMission(goal, workspacePath);
-      const captain = createCaptain();
-      const events = createMissionEvents(mission, captain);
+      const team = createTeam();
+      const captain = team.members.find((member) => member.primary) ?? team.members[0];
+      const events = createMissionEvents(mission, team);
       const summary = formatSummary(goal);
       const updatedMission: RecentMissionRecord = {
         ...mission,
@@ -262,12 +355,17 @@ export function createBrowserBridge(options: BrowserBridgeOptions = {}): WinToge
         `Summary: ${summary}`
       ].join("\n");
 
+      if (!captain) {
+        throw new Error("Browser bridge failed to assemble a captain.");
+      }
+
       return {
         mission,
         captain: {
-          ...captain,
+          ...captain.agent,
           status: "done"
         },
+        team,
         recentMission: updatedMission,
         events,
         persistence: {

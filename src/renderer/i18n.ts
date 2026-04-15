@@ -33,6 +33,9 @@ export type AppStrings = {
   missionIdUnassigned: string;
   timelineTitle: string;
   rosterTitle: string;
+  rosterLead: string;
+  rosterMember: string;
+  rosterEmptyState: string;
   contextTitle: string;
   contextMission: string;
   contextFocus: string;
@@ -59,10 +62,14 @@ export type AppStrings = {
   memoryLoading: string;
   missionStarted: (goal: string) => string;
   captainJoined: (name: string) => string;
+  agentJoined: (name: string) => string;
   captainPlanning: (goal: string) => string;
   captainSummary: (goal: string) => string;
   captainCliResponse: (message: string) => string;
   captainCliFailure: (message: string) => string;
+  researcherContext: (goal: string) => string;
+  builderReady: (goal: string) => string;
+  agentUpdate: (name: string, message: string) => string;
 };
 
 const zhCN: AppStrings = {
@@ -73,7 +80,7 @@ const zhCN: AppStrings = {
   navMemory: "记忆中心",
   navTeamRoomHint: "先创建一个任务，才能进入当前协作室",
   sidebarRecentMissions: "最近任务",
-  sidebarNoRecentMissions: "还没有最近任务，先创建一个新的目标吧。",
+  sidebarNoRecentMissions: "还没有最近任务，先创建一个新目标吧。",
   sidebarCodexCli: "Codex CLI",
   sidebarWorkspace: "当前工作区",
   sidebarWorkspaceEmpty: "尚未选择工作区",
@@ -81,15 +88,16 @@ const zhCN: AppStrings = {
   runtimeReady: "已就绪",
   runtimeUnavailable: "未就绪",
   homeTitle: "把目标交给 Captain",
-  homeIntro: "描述你现在想推进的任务。Captain 会先接需求、拆计划，然后在合适的时候拉起需要的专业 Agent。",
-  homeHint: "建议直接写一句清楚的目标，例如“先做登录流程并给我一个可运行的第一版”。",
+  homeIntro:
+    "描述你现在想推进的事情。Captain 会先接手需求、拆分计划，再在合适的时候拉起需要的专业 Agent。",
+  homeHint: "建议直接写一句清晰的目标，例如“先做登录流程，并给我一个可运行的第一版”。",
   homeSubmit: "开始协作",
   homeEnvironmentTitle: "开发环境",
   homeCodexReady: (message) => `Codex CLI 已就绪：${message}`,
   homeCodexUnavailable: (message) => `Codex CLI 未就绪：${message}`,
   homeSmokeTestLabel: "测试 Codex CLI",
-  homeSmokeTestIdle: "先跑一次最小测试，确认 Codex CLI 不只是显示就绪，而是真的能返回结果。",
-  homeSmokeTestRunning: "正在测试 Codex CLI，请稍等...",
+  homeSmokeTestIdle: "先跑一次最小测试，确认 Codex CLI 不只是显示已就绪，而是真的能返回结果。",
+  homeSmokeTestRunning: "正在测试 Codex CLI，请稍候...",
   homeSmokeTestSuccess: (message) => `Codex CLI 测试成功：${message}`,
   homeSmokeTestFailed: (message) => `Codex CLI 测试失败：${message}`,
   homeSmokeTestRawOutput: "CLI 原始返回",
@@ -98,6 +106,9 @@ const zhCN: AppStrings = {
   missionIdUnassigned: "未分配",
   timelineTitle: "协作时间线",
   rosterTitle: "当前成员",
+  rosterLead: "主导",
+  rosterMember: "协作成员",
+  rosterEmptyState: "当前还没有组建团队，完成任务启动后这里会加载默认模板的成员。",
   contextTitle: "当前上下文",
   contextMission: "任务",
   contextFocus: "焦点",
@@ -118,16 +129,20 @@ const zhCN: AppStrings = {
   historyIntro: "这里会展示过去的任务、阶段总结和结果回顾。",
   historyOpenRoom: "进入协作室",
   memoryTitle: "记忆中心",
-  memoryIntro: "这里会展示项目记忆、团队记忆和关键上下文沉淀。",
+  memoryIntro: "这里会展示项目记忆、团队记忆和已保存的上下文。",
   memoryIndexSection: "记忆索引",
   memoryWorkLogSection: "当前工作日志",
   memoryLoading: "正在读取记忆内容...",
   missionStarted: (goal) => `任务“${goal}”已启动。`,
   captainJoined: (name) => `${name} 已加入当前协作室。`,
+  agentJoined: (name) => `${name} 已加入当前协作室。`,
   captainPlanning: (goal) => `Captain 正在为这个目标规划下一步：${goal}`,
   captainSummary: (goal) => `Captain 已给出第一版执行摘要，接下来会围绕“${goal}”继续组织协作。`,
-  captainCliResponse: (message) => `Captain 收到了 Codex CLI 的第一轮回应：${message}`,
-  captainCliFailure: (message) => `Captain 尝试调用 Codex CLI 时遇到问题：${message}`
+  captainCliResponse: (message) => `Captain 收到 Codex CLI 的第一轮回应：${message}`,
+  captainCliFailure: (message) => `Captain 尝试调用 Codex CLI 时遇到问题：${message}`,
+  researcherContext: (goal) => `Researcher 正在梳理与“${goal}”相关的上下文。`,
+  builderReady: (goal) => `Builder 正在准备围绕“${goal}”的首轮实现步骤。`,
+  agentUpdate: (name, message) => `${name} 报告：${message}`
 };
 
 const en: AppStrings = {
@@ -146,7 +161,8 @@ const en: AppStrings = {
   runtimeReady: "Ready",
   runtimeUnavailable: "Unavailable",
   homeTitle: "Hand the goal to Captain",
-  homeIntro: "Describe what you want to move forward. Captain will take the request, break the plan down, and assemble the right specialist agents when needed.",
+  homeIntro:
+    "Describe what you want to move forward. Captain will take the request, break the plan down, and assemble the right specialist agents when needed.",
   homeHint: 'Try a direct goal such as "Build the first login flow and give me a runnable first pass."',
   homeSubmit: "Start Collaboration",
   homeEnvironmentTitle: "Environment",
@@ -163,6 +179,9 @@ const en: AppStrings = {
   missionIdUnassigned: "Unassigned",
   timelineTitle: "Timeline",
   rosterTitle: "Agents",
+  rosterLead: "Lead",
+  rosterMember: "Member",
+  rosterEmptyState: "No team has been assembled yet. Start a mission to load the default template.",
   contextTitle: "Context",
   contextMission: "Mission",
   contextFocus: "Focus",
@@ -189,10 +208,14 @@ const en: AppStrings = {
   memoryLoading: "Loading memory content...",
   missionStarted: (goal) => `Mission "${goal}" started.`,
   captainJoined: (name) => `${name} joined the current room.`,
+  agentJoined: (name) => `${name} joined the current room.`,
   captainPlanning: (goal) => `Captain is planning the next steps for: ${goal}`,
   captainSummary: (goal) => `Captain has posted the first execution summary for "${goal}".`,
   captainCliResponse: (message) => `Captain received the first Codex CLI response: ${message}`,
-  captainCliFailure: (message) => `Captain hit a Codex CLI problem: ${message}`
+  captainCliFailure: (message) => `Captain hit a Codex CLI problem: ${message}`,
+  researcherContext: (goal) => `Researcher is gathering context for: ${goal}`,
+  builderReady: (goal) => `Builder is preparing the first implementation step for: ${goal}`,
+  agentUpdate: (name, message) => `${name} reports: ${message}`
 };
 
 export function getStrings(language: AppLanguage): AppStrings {
